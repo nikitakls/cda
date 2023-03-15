@@ -1,8 +1,10 @@
 <?php
-/*
+
+
+/**
  * The MIT License
  *
- * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
+ * Copyright 2018  Peter Gee <https://github.com/pgee70>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,243 +18,164 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\Component\SingleComponent;
 
+/**
+ *
+ * @package     PHPHealth\CDA
+ * @author      Peter Gee <https://github.com/pgee70>
+ * @link        https://framagit.org/php-health/cda
+ *
+ */
+
 use PHPHealth\CDA\Elements\AbstractElement;
-use PHPHealth\CDA\HasClassCode;
-use PHPHealth\CDA\Elements\TemplateId;
-use PHPHealth\CDA\DataType\Identifier\InstanceIdentifier;
-use PHPHealth\CDA\Elements\Id;
-use PHPHealth\CDA\Elements\Title;
-use PHPHealth\CDA\DataType\Code\CodedWithEquivalents;
 use PHPHealth\CDA\Elements\Code;
-use PHPHealth\CDA\DataType\TextAndMultimedia\CharacterString;
-use PHPHealth\CDA\Elements\Text;
 use PHPHealth\CDA\Elements\Entry;
+use PHPHealth\CDA\Elements\Html\Text;
+use PHPHealth\CDA\Elements\Html\Title;
+use PHPHealth\CDA\Elements\Id;
+use PHPHealth\CDA\Interfaces\ClassCodeInterface;
+use PHPHealth\CDA\Interfaces\MoodCodeInterface;
+use PHPHealth\CDA\Traits\AuthorTrait;
+use PHPHealth\CDA\Traits\ClassCodeTrait;
+use PHPHealth\CDA\Traits\CodeTrait;
+use PHPHealth\CDA\Traits\ConfidentialityCodeTrait;
+use PHPHealth\CDA\Traits\EntriesTrait;
+use PHPHealth\CDA\Traits\ExtCoverage2Trait;
+use PHPHealth\CDA\Traits\IdTrait;
+use PHPHealth\CDA\Traits\InformantsTrait;
+use PHPHealth\CDA\Traits\LanguageCodeTrait;
+use PHPHealth\CDA\Traits\MoodCodeTrait;
+use PHPHealth\CDA\Traits\SingleComponentTrait;
+use PHPHealth\CDA\Traits\SubjectTrait;
+use PHPHealth\CDA\Traits\TextTrait;
+use PHPHealth\CDA\Traits\TitleTrait;
 
 /**
- * 
- * Single section which will be included in component
+ * Class Section
  *
- * @author Julien Fastré <julien.fastre@champs-libres.coop>
+ * @package PHPHealth\CDA\Component\SingleComponent
  */
-class Section extends AbstractElement implements HasClassCode
+class Section extends AbstractElement implements ClassCodeInterface, MoodCodeInterface
 {
-    /**
-     *
-     * @var InstanceIdentifier
-     */
-    private $id;
-    
-    /**
-     *
-     * @var CodedWithEquivalents
-     */
-    private $code;
-    
-    /**
-     * 
-     * @var CharacterString
-     */
-    private $text;
-    
-    /**
-     *
-     * @var InstanceIdentifier[]
-     */
-    private $templateIds = array();
-    
-    /**
-     *
-     * @var CharacterString
-     */
-    private $title;
-    
-    /**
-     *
-     * @var Entry[]
-     */
-    private $entries = array();
-    
-    protected function getElementTag(): string
-    {
-        return 'section';
-    }
+    use AuthorTrait;
+    use CodeTrait;
+    use ConfidentialityCodeTrait;
+    use EntriesTrait;
+    use IdTrait;
+    use LanguageCodeTrait;
+    use SingleComponentTrait;
+    use SubjectTrait;
+    use TextTrait;
+    use TitleTrait;
+    use InformantsTrait;
+    use ExtCoverage2Trait;
+    use ClassCodeTrait;
+    use MoodCodeTrait;
 
-    public function getClassCode(): string
-    {
-        return 'DOCSECT';
-    }
-    
+    /** @noinspection ArrayTypeOfParameterByDefaultValueInspection */
+
     /**
-     * 
-     * @return InstanceIdentifier
+     * Section constructor.
+     *
+     * @param Id    $id
+     * @param Code  $code
+     * @param Title $title
+     * @param Text  $text
+     * @param       $entry
      */
-    public function getId()
+    public function __construct($id = null, $code = null, $title = null, $text = null, $entry = [])
     {
-        return $this->id;
-    }
+        $this->setAcceptableClassCodes(ClassCodeInterface::ActClass)
+          ->setAcceptableMoodCodes(MoodCodeInterface::ActMood)
+          ->setClassCode(ClassCodeInterface::DOCUMENT_SECTION)
+          ->setMoodCode(MoodCodeInterface::EVENT);
 
-    public function setId(InstanceIdentifier $id)
-    {
-        $this->id = $id;
-        
-        return $this;
-    }
+        $this->entries = [];
 
-    public function getCode(): CodedWithEquivalents
-    {
-        return $this->code;
-    }
-
-    public function setCode(CodedWithEquivalents $code)
-    {
-        $this->code = $code;
-        return $this;
-    }
-    
-    public function getText(): CharacterString
-    {
-        return $this->text;
-    }
-
-    public function setText(CharacterString $text)
-    {
-        $this->text = $text;
-        return $this;
-    }
-    
-    public function setTemplateIds(array $templateIds)
-    {
-        $validation = \array_reduce($templateIds, 
-            function ($carry, $item) {
-                if ($carry === false) {
-                    return false;
-                }
-                
-                return $item instanceof InstanceIdentifier;
-            });
-        
-        if ($validation === false) {
-            throw new \UnexpectedValueException(sprintf("The values of templateIds"
-                . " must contains only %s", InstanceIdentifier::class));
+        if ($id && $id instanceof Id) {
+            $this->setId($id);
         }
-        
-        $this->templateIds = $templateIds;
-        
-        return $this;
+        if ($code && $code instanceof Code) {
+            $this->setCode($code);
+        }
+
+        if ($title && $title instanceof Title) {
+            $this->setTitle($title);
+        }
+
+        if ($text && $text instanceof Text) {
+            $this->setText($text);
+        }
+        if ($entry) {
+            if (\is_array($entry)) {
+                $this->setEntries($entry);
+            } elseif ($entry instanceof Entry) {
+                $this->addEntry($entry);
+            }
+        }
     }
-    
-    public function addTemplateId(InstanceIdentifier $templateId)
+
+
+    /**
+     * @return self
+     */
+    public function clearEntries(): self
     {
-        $this->templateIds[] = $templateId;
-        
+        $this->entries = array();
         return $this;
     }
 
-            
-    /**
-     * the code for the current section
-     * 
-     * @return InstanceIdentifier[]
-     */
-    public function getTemplateIds()
-    {
-        return $this->templateIds;
-    }
-    
-    /**
-     * The title for the section
-     * 
-     * @return CharacterString
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-    
-    public function setTitle(CharacterString $title)
-    {
-        $this->title = $title;
-        
-        return $this;
-    }
-    
     /**
      * create an entry, which is already bound to the current section
-     * 
+     *
      * @return Entry
      */
     public function createEntry(): Entry
     {
         $entry = new Entry();
-        
         $this->addEntry($entry);
-        
         return $entry;
     }
-    
-    function getEntries(): array
-    {
-        return $this->entries;
-    }
-    
-    public function addEntry(Entry $entry)
-    {
-        $this->entries[] = $entry;
-    }
 
-    
+
     /**
-     * 
      * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
      */
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         $el = $this->createElement($doc);
-        // append templateId
-        if ($this->getTemplateIds() !== NULL) {
-            foreach ($this->getTemplateIds() as $id) {
-                $el->appendChild(
-                    (new TemplateId($id))->toDOMElement($doc)
-                    );
-            }
-        }
-        // append id
-        if ($this->getId() !== NULL) {
-            $el->appendChild(
-                (new Id($this->getId()))->toDOMElement($doc)
-                );
-        }
-        // append code
-        if ($this->getCode() !== NULL) {
-            $el->appendChild(
-                (new Code($this->getCode()))->toDOMElement($doc)
-                );
-        }
-        // append title
-        if (! empty($this->getTitle())) {
-            $el->appendChild(
-                (new Title($this->getTitle()))->toDOMElement($doc)
-                );
-        }
-        // append text
-        if (! empty($this->getText())) {
-            $el->appendChild(
-                (new Text($this->getText()))->toDOMElement($doc)
-                );
-        }
-        
-        foreach ($this->getEntries() as $entry) {
-            $el->appendChild($entry->toDOMElement($doc));
-        }
-        
+        $this->renderId($el, $doc)
+          ->renderCode($el, $doc)
+          ->renderTitle($el, $doc)
+          ->renderText($el, $doc)
+          ->renderConfidentialityCode($el, $doc)
+          ->renderLanguageCode($el, $doc)
+          ->renderSubject($el, $doc)
+          ->renderAuthor($el, $doc)
+          ->renderInformants($el, $doc)
+          ->renderEntries($el, $doc)
+          ->renderComponents($el, $doc)
+          ->renderExtCoverage2($el, $doc);
         return $el;
     }
+
+
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'section';
+    }
+
 }

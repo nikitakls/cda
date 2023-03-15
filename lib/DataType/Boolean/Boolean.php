@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -16,66 +16,89 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\DataType\Boolean;
 
+use PHPHealth\CDA\ClinicalDocument as CDA;
 use PHPHealth\CDA\DataType\AnyType;
 
 /**
- * Boolean element
- * 
- * As the boolean element may be applyed with different tags, 
- * the tag on wich the element apply may be set by the Element which will
- * use the data
+ * Boolean attribute
+ *
+ * As the boolean type may have different attribute values
  *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
 class Boolean extends AnyType
 {
     protected $value;
-    
-    protected $tag;
-    
-    public function __construct($value, $tag = null)
+    protected $attribute;
+
+    /**
+     * Boolean constructor.
+     *
+     * @param      $attribute
+     * @param      $value
+     */
+    public function __construct($attribute, $value)
     {
-        $this->value = $value;
-        $this->tag = $tag;
+        $this->setAttribute($attribute);
+        $this->setValue($value);
     }
 
+    /**
+     * @param \DOMElement       $el
+     * @param \DOMDocument|NULL $doc
+     */
+    public function setValueToElement(\DOMElement $el, \DOMDocument $doc)
+    {
+        \assert($this->getAttribute() !== null, new \RuntimeException('The tag on boolean must be defined'));
+        $el->setAttributeNS(CDA::NS_CDA, $this->getAttribute(), $this->getValue());
+    }
+
+    /**
+     * @return null
+     */
+    public function getAttribute()
+    {
+        return $this->attribute;
+    }
+
+    /**
+     * @param $attribute
+     *
+     * @return self
+     */
+    public function setAttribute($attribute): self
+    {
+        $this->attribute = $attribute;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getValue()
     {
         return $this->value;
     }
 
-    public function getTag()
+    /**
+     * @param $value
+     *
+     * @return self
+     */
+    public function setValue($value): self
     {
-        return $this->tag;
-    }
-
-    public function setValue($value)
-    {
-        $this->value = $value;
+        $this->value = $value === 'true' || $value
+          ? 'true'
+          : 'false';
         return $this;
-    }
-
-    public function setTag($tag)
-    {
-        $this->tag = $tag;
-        
-        return $this;
-    }
-
-        
-    public function setValueToElement(\DOMElement &$el, \DOMDocument $doc = null)
-    {
-        assert ($this->getTag() === null, new \RuntimeException("The tag "
-            . "on boolean must be defined"));
-        
-        $el->setAttributeNS(CD::NS_CDA, $this->getTag(), $value);
     }
 }

@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -16,222 +16,114 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\RIM\Act;
 
 use PHPHealth\CDA\Elements\AbstractElement;
-use PHPHealth\CDA\HasClassCode;
-use PHPHealth\CDA\HasMoodCodeInterface;
-use PHPHealth\CDA\DataType\Collection\Set;
-use PHPHealth\CDA\DataType\Code\CodedWithEquivalents;
-use PHPHealth\CDA\DataType\Boolean\Boolean;
-use PHPHealth\CDA\DataType\TextAndMultimedia\EncapsuledData;
-use PHPHealth\CDA\DataType\Code\StatusCode;
-use PHPHealth\CDA\DataType\Identifier\InstanceIdentifier;
-use PHPHealth\CDA\Elements\Code;
-use PHPHealth\CDA\DataType\Code\CodedValue;
+use PHPHealth\CDA\Interfaces\ClassCodeInterface;
+use PHPHealth\CDA\Interfaces\MoodCodeInterface;
+use PHPHealth\CDA\Interfaces\NegationInterface;
+use PHPHealth\CDA\Traits\AuthorsTrait;
+use PHPHealth\CDA\Traits\ClassCodeTrait;
+use PHPHealth\CDA\Traits\CodeTrait;
+use PHPHealth\CDA\Traits\EffectiveTimeTrait;
+use PHPHealth\CDA\Traits\EntryRelationshipsTrait;
+use PHPHealth\CDA\Traits\IdsTrait;
+use PHPHealth\CDA\Traits\InformantsTrait;
+use PHPHealth\CDA\Traits\LanguageCodeTrait;
+use PHPHealth\CDA\Traits\MoodCodeTrait;
+use PHPHealth\CDA\Traits\NegationIndTrait;
+use PHPHealth\CDA\Traits\ParticipantsTrait;
+use PHPHealth\CDA\Traits\PerformersTrait;
+use PHPHealth\CDA\Traits\PreconditionsTrait;
+use PHPHealth\CDA\Traits\PriorityCodeTrait;
+use PHPHealth\CDA\Traits\ReferencesTrait;
+use PHPHealth\CDA\Traits\SpecimensTrait;
+use PHPHealth\CDA\Traits\StatusCodeTrait;
+use PHPHealth\CDA\Traits\SubjectTrait;
+use PHPHealth\CDA\Traits\TextTrait;
 
 /**
- * A record of something that is being done, has been done, can be done, 
+ * A record of something that is being done, has been done, can be done,
  * or is intended or requested to be done.
  *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
-class Act extends AbstractElement implements HasClassCode, HasMoodCodeInterface
+class Act extends AbstractElement implements ClassCodeInterface, MoodCodeInterface, NegationInterface
 {
+    use IdsTrait;
+    use CodeTrait;
+    use TextTrait;
+    use StatusCodeTrait;
+    use EffectiveTimeTrait;
+    use PriorityCodeTrait;
+    use LanguageCodeTrait;
+    use SubjectTrait;
+    use SpecimensTrait;
+    use PerformersTrait;
+    use AuthorsTrait;
+    use InformantsTrait;
+    use ParticipantsTrait;
+    use EntryRelationshipsTrait;
+    use ReferencesTrait;
+    use PreconditionsTrait;
+
+    use ClassCodeTrait;
+    use MoodCodeTrait;
+    use NegationIndTrait;
+
     /**
-     * A unique identifier for the Act.
+     * Act constructor.
      *
-     * @var Set
      */
-    protected $ids;
-    
+    public function __construct()
+    {
+        $this->setAcceptableClassCodes(ClassCodeInterface::x_ActClassDocumentEntryAct)
+          ->setAcceptableMoodCodes(MoodCodeInterface::x_DocumentActMood)
+          ->setMoodCode(MoodCodeInterface::EVENT)
+          ->setClassCode(ClassCodeInterface::ACT);
+    }
+
+
     /**
+     * @param \DOMDocument $doc
      *
-     * @var CodedValue
+     * @return \DOMElement
      */
-    protected $code;
-    
-    /**
-     *
-     * @var Boolean
-     */
-    protected $negationInd;
-    
-    /**
-     *
-     * @var EncapsuledData
-     */
-    protected $text;
-    
-    /**
-     *
-     * @var StatusCode
-     */
-    protected $statusCode;
-    
-    protected $effectiveTime = array();
-    
-    /**
-     *
-     * @var array 
-     */
-    protected $templateIds;
-    
-    protected $moodCode = 'EVN';
-    
-    
-    public function getIds()
-    {
-        return $this->ids;
-    }
-
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    public function getNegationInd(): Boolean
-    {
-        return $this->negationInd;
-    }
-
-    public function getText()
-    {
-        return $this->text;
-    }
-
-    public function getStatusCode()
-    {
-        return $this->statusCode;
-    }
-
-    public function getEffectiveTime()
-    {
-        return $this->effectiveTime;
-    }
-    
-    public function getTemplateIds()
-    {
-        return $this->templateIds;
-    }
-
-    
-    public function setIds(Set $ids)
-    {
-        $this->ids = $ids;
-        return $this;
-    }
-
-    public function setCode(CodedValue $code)
-    {
-        $this->code = $code;
-        
-        return $this;
-    }
-
-    public function setNegationInd(Boolean $negationInd)
-    {
-        $this->negationInd = $negationInd;
-        return $this;
-    }
-
-    public function setText(EncapsuledData $text)
-    {
-        $this->text = $text;
-        return $this;
-    }
-
-    public function setStatusCode(StatusCode $statusCode)
-    {
-        $this->statusCode = $statusCode;
-        return $this;
-    }
-
-    public function setEffectiveTime($effectiveTime, $append = true)
-    {
-        if ($append) {
-            $this->effectiveTime[] = $effectiveTime;
-        } else {
-            $this->effectiveTime = array($effectiveTime);
-        }
-        
-        return $this;
-    }
-
-    /**
-     * 
-     * @param InstanceIdentifier[] $templateIds
-     * @return $this
-     */
-    public function setTemplateIds(array $templateIds)
-    {
-        // check that each element is an instance of InstanceIdentifier
-        $result = \array_reduce($templateIds, function ($carry, $current) {
-            if ($carry === false) {
-                return false;
-            }
-            
-            return $current instanceof InstanceIdentifier;
-        });
-        
-        if ($result === false) {
-            throw new \RuntimeException(sprintf("the templateIds must be "
-                . "instance of %s", InstanceIdentifier::class));
-        }
-        
-        $this->templateIds = $templateIds;
-        
-        
-        return $this;
-    }
-
-    public function addTemplateId(InstanceIdentifier $id)
-    {
-        $this->templateIds[] = $id;
-        
-        return $this;
-    }
-            
-    public function getClassCode(): string
-    {
-        return 'ACT';
-    }
-    
-    public function getMoodCode()
-    {
-        return $this->moodCode;
-    }
-
-    protected function getElementTag(): string
-    {
-        return 'act';
-    }
-
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         $el = $this->createElement($doc);
-        
-        if ($this->getTemplateIds() !== null) {
-            foreach ($this->templateIds as $id) {
-                $el->appendChild((new TemplateId($id))->toDOMElement($doc));
-            }
-        }
-        
-        if ($this->getText() !== null) {
-            $el->appendChild((new Text($this->getText()))->toDOMElement($doc));
-        }
-        
-        if ($this->getCode() !== null) {
-            $el->appendChild((new Code($this->getCode()))->toDOMElement($doc));
-        }
-        
+        $this->renderIds($el, $doc);
+        $this->renderCode($el, $doc);
+        $this->renderText($el, $doc);
+        $this->renderStatusCode($el, $doc);
+        $this->renderEffectiveTime($el, $doc);
+        $this->renderPriorityCode($el, $doc);
+        $this->renderLanguageCode($el, $doc);
+        $this->renderSubject($el, $doc);
+        $this->renderSpecimens($el, $doc);
+        $this->renderPerformers($el, $doc);
+        $this->renderAuthors($el, $doc);
+        $this->renderParticipants($el, $doc);
+        $this->renderEntryRelationships($el, $doc);
+        $this->renderReferences($el, $doc);
+        $this->renderPreconditions($el, $doc);
         return $el;
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'act';
     }
 
 }

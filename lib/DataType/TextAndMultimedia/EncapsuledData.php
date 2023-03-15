@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -17,7 +17,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -42,121 +42,189 @@ use PHPHealth\CDA\ClinicalDocument as CD;
 class EncapsuledData extends BinaryData
 {
     private $mediaType;
-    
-    private $charset;
-    
-    private $language;
-    
-    private $compression;
-    
-    private $reference;
-    
-    private $integrityCheck;
-    
-    private $intetgrityCheckAlgorithm;
-    
-    private $thumbnail;
-    
-    public function getMediaType()
-    {
-        return $this->mediaType;
-    }
 
+    private $charset;
+
+    private $language;
+
+    private $compression;
+
+    private $reference;
+
+    private $integrityCheck;
+
+    private $intetgrityCheckAlgorithm;
+
+    private $thumbnail;
+
+    /**
+     * @return mixed
+     */
     public function getCharset()
     {
         return $this->charset;
     }
 
-    public function getLanguage()
-    {
-        return $this->language;
-    }
-
-    public function getCompression()
-    {
-        return $this->compression;
-    }
-
-    public function getReference()
-    {
-        return $this->reference;
-    }
-
-    public function getIntegrityCheck()
-    {
-        return $this->integrityCheck;
-    }
-
-    public function getIntetgrityCheckAlgorithm()
-    {
-        return $this->intetgrityCheckAlgorithm;
-    }
-
-    public function getThumbnail()
-    {
-        return $this->thumbnail;
-    }
-
-    public function setMediaType($mediaType)
-    {
-        $this->mediaType = $mediaType;
-        return $this;
-    }
-
-    public function setCharset($charset)
+    /**
+     * @param $charset
+     *
+     * @return self
+     */
+    public function setCharset($charset): self
     {
         $this->charset = $charset;
         return $this;
     }
 
-    public function setLanguage($language)
+    /**
+     * @return mixed
+     */
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+
+    /**
+     * @param $language
+     *
+     * @return self
+     */
+    public function setLanguage($language): self
     {
         $this->language = $language;
         return $this;
     }
 
-    public function setCompression($compression)
+    /**
+     * @return mixed
+     */
+    public function getCompression()
+    {
+        return $this->compression;
+    }
+
+    /**
+     * @param $compression
+     *
+     * @return self
+     */
+    public function setCompression($compression): self
     {
         $this->compression = $compression;
         return $this;
     }
 
-    public function setReference($reference)
+    /**
+     * @return mixed
+     */
+    public function getReference()
+    {
+        return $this->reference;
+    }
+
+    /**
+     * @param $reference
+     *
+     * @return self
+     */
+    public function setReference($reference): self
     {
         $this->reference = $reference;
         return $this;
     }
 
-    public function setIntegrityCheck($integrityCheck)
+    /**
+     * @return mixed
+     */
+    public function getIntegrityCheck()
+    {
+        return $this->integrityCheck;
+    }
+
+    /**
+     * @param $integrityCheck
+     *
+     * @return self
+     */
+    public function setIntegrityCheck($integrityCheck): self
     {
         $this->integrityCheck = $integrityCheck;
         return $this;
     }
 
-    public function setIntetgrityCheckAlgorithm($intetgrityCheckAlgorithm)
+    /**
+     * @return mixed
+     */
+    public function getIntegrityCheckAlgorithm()
     {
-        $this->intetgrityCheckAlgorithm = $intetgrityCheckAlgorithm;
+        return $this->intetgrityCheckAlgorithm;
+    }
+
+    /**
+     * @param $integrityCheckAlgorithm
+     *
+     * @return self
+     */
+    public function setIntegrityCheckAlgorithm($integrityCheckAlgorithm): self
+    {
+        $this->intetgrityCheckAlgorithm = $integrityCheckAlgorithm;
         return $this;
     }
 
-    public function setThumbnail($thumbnail)
+    /**
+     * @return mixed
+     */
+    public function getThumbnail()
+    {
+        return $this->thumbnail;
+    }
+
+    /**
+     * @param $thumbnail
+     *
+     * @return self
+     */
+    public function setThumbnail($thumbnail): self
     {
         $this->thumbnail = $thumbnail;
         return $this;
     }
 
-    public function setValueToElement(\DOMElement &$el, \DOMDocument $doc = null)
+    /**
+     * @param \DOMElement       $el
+     * @param \DOMDocument|NULL $doc
+     */
+    public function setValueToElement(\DOMElement $el, \DOMDocument $doc)
     {
-        if ($this->getMediaType() !== 'text/plain') {
-            $el->setAttribute(CD::NS_CDA.'mediaType', $this->getMediaType());
+        if ($this->getMediaType() && $this->getMediaType() !== 'text/plain') {
+            $el->setAttribute(CD::NS_CDA . 'mediaType', $this->getMediaType());
         }
-    
-        if ($this->getMediaType() == 'text/plain') {
-            $content = new \DOMCdataSection($this->getContent());
-        } else {
-            $content = new \DOMText($this->getContent());
-        }
-        
+
+        $content = $this->getMediaType() === 'text/plain'
+          ? new \DOMCdataSection($this->getContent())
+          : new \DOMText($this->getContent());
+
         $el->appendChild($content);
     }
+
+    /**
+     * @return mixed
+     */
+    public function getMediaType()
+    {
+        return $this->mediaType;
+    }
+
+    /**
+     * @param $mediaType
+     *
+     * @return self
+     */
+    public function setMediaType($mediaType): self
+    {
+        $this->mediaType = $mediaType;
+        return $this;
+    }
+
+
 }

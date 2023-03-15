@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -16,21 +16,18 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\Elements;
 
-use PHPHealth\CDA\Elements\AbstractElement;
 use PHPHealth\CDA\DataType\Identifier\InstanceIdentifier;
-use PHPHealth\CDA\ClinicalDocument as CDA;
 
 /**
- * 
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
 class TemplateId extends AbstractElement
@@ -40,34 +37,54 @@ class TemplateId extends AbstractElement
      * @var InstanceIdentifier
      */
     protected $root;
-    
+
+    /**
+     * TemplateId constructor.
+     *
+     * @param InstanceIdentifier $code
+     */
     public function __construct(InstanceIdentifier $code)
     {
         $this->root = $code;
     }
 
-        public function getId(): InstanceIdentifier
-    {
-        return $this->root;
-    }
-
-    public function setId(InstanceIdentifier $code)
+    /**
+     * @param InstanceIdentifier $code
+     *
+     * @return self
+     */
+    public function setId(InstanceIdentifier $code): self
     {
         $this->root = $code;
         return $this;
     }
 
-            
-    protected function getElementTag(): string
-    {
-        return 'templateId';
-    }
-
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         $el = $this->createElement($doc);
         $this->getId()->setValueToElement($el, $doc);
-        
+
         return $el;
+    }
+
+    /**
+     * @return InstanceIdentifier
+     */
+    public function getId(): InstanceIdentifier
+    {
+        return $this->root;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'templateId';
     }
 }

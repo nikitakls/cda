@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -16,66 +16,57 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\RIM\Entity;
 
 use PHPHealth\CDA\DataType\Code\CodedWithEquivalents;
-use PHPHealth\CDA\Elements\Code;
+use PHPHealth\CDA\Interfaces\ClassCodeInterface;
+use PHPHealth\CDA\Traits\CodedWithEquivalentsTrait;
 
 /**
- * 
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
 class ManufacturedLabeledDrug extends DrugOrMaterial
 {
+    use CodedWithEquivalentsTrait;
+
     /**
+     * ManufacturedLabeledDrug constructor.
      *
-     * @var CodedWithEquivalents 
+     * @param CodedWithEquivalents $code
      */
-    protected $code;
-    
-    public function __construct(CodedWithEquivalents $code)
+    public function __construct($code = null)
     {
-        $this->setCode($code);
+        if ($code && $code instanceof CodedWithEquivalents) {
+            $this->setCodedWithEquivalents($code);
+        }
+        $this->setAcceptableClassCodes(ClassCodeInterface::EntityClassManufacturedMaterial)
+          ->setClassCode(ClassCodeInterface::MANUFACTURED_MATERIAL);
     }
 
-    
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    public function setCode(CodedWithEquivalents $code)
-    {
-        $this->code = $code;
-        return $this;
-    }
-
-        
-    protected function getElementTag(): string
-    {
-        return 'manufacturedLabeledDrug';
-    }
-
-    public function getDefaultClassCode(): string
-    {
-        return 'MMAT';
-    }
-
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         $el = $this->createElement($doc);
-        
-        if ($this->getCode() !== null) {
-            $el->appendChild((new Code($this->getCode()))->toDOMElement($doc));
-        }
-        
+        $this->renderCodedWithEquivalents($el, $doc);
         return $el;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'manufacturedLabeledDrug';
     }
 }

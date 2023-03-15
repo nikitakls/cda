@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -17,7 +17,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -26,54 +26,48 @@
 
 namespace PHPHealth\CDA\RIM\Participation;
 
+use PHPHealth\CDA\Interfaces\TypeCodeInterface;
 use PHPHealth\CDA\RIM\Role\PatientRole;
+use PHPHealth\CDA\Traits\PatientRoleTrait;
 
 /**
- *
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
 class RecordTarget extends Participation
 {
+    use PatientRoleTrait;
+
     /**
+     * RecordTarget constructor.
      *
-     * @var PatientRole
+     * @param PatientRole $patientRole
      */
-    protected $patientRole;
-    
     public function __construct(PatientRole $patientRole)
     {
-        $this->setPatientRole($patientRole);
-    }
-    
-    public function getPatientRole()
-    {
-        return $this->patientRole;
+        $this->setAcceptableTypeCodes(['', TypeCodeInterface::RECORD_TARGET])
+          ->setPatientRole($patientRole)
+          ->setTypeCode(TypeCodeInterface::RECORD_TARGET);
     }
 
-    public function setPatientRole(PatientRole $patientRole)
-    {
-        $this->patientRole = $patientRole;
-        return $this;
-    }
-
-        
-    protected function getElementTag()
-    {
-        return 'recordTarget';
-    }
-    
-    public function getTypeCode()
-    {
-        return 'RCT';
-    }
-
-    public function toDOMElement(\DOMDocument $doc)
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
+    public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         $el = $this->createElement($doc);
-        
+
         $el->appendChild($this->patientRole->toDOMElement($doc));
-        
+
         return $el;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'recordTarget';
     }
 }

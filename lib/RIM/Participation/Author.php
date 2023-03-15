@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 julien.
@@ -16,90 +16,75 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\RIM\Participation;
 
 use PHPHealth\CDA\DataType\Quantity\DateAndTime\TimeStamp;
+use PHPHealth\CDA\Interfaces\ContextControlCodeInterface;
+use PHPHealth\CDA\Interfaces\TypeCodeInterface;
 use PHPHealth\CDA\RIM\Role\AssignedAuthor;
-use PHPHealth\CDA\Elements\Time;
+use PHPHealth\CDA\Traits\AssignedAuthorTrait;
+use PHPHealth\CDA\Traits\ContextControlCodeTrait;
+use PHPHealth\CDA\Traits\FunctionCodedValueTrait;
+use PHPHealth\CDA\Traits\TimeTrait;
 
 /**
- * 
- *
  * @author julien.fastre@champs-libres.coop
  */
-class Author extends Participation
+class Author extends Participation implements ContextControlCodeInterface
 {
+    use FunctionCodedValueTrait;
+    use AssignedAuthorTrait;
+    use TimeTrait;
+
+    use ContextControlCodeTrait;
+
     /**
+     * Author constructor.
      *
-     * @var TimeStamp
+     * @param TimeStamp      $time_stamp
+     * @param AssignedAuthor $assignedAuthor
      */
-    private $time;
-    
-    /**
-     *
-     * @var AssignedAuthor[]
-     */
-    private $assignedAuthors = array();
-    
     public function __construct(
-        TimeStamp $time,
-        $assignedAuthors
+      $time_stamp = null,
+      $assignedAuthor = null
     ) {
-        $this->setTime($time);
-        $this->setAssignedAuthors($assignedAuthors);
-    }
-    
-    public function getTime(): TimeStamp
-    {
-        return $this->time;
-    }
-
-    public function getAssignedAuthors(): array
-    {
-        return $this->assignedAuthors;
+        $this->setAcceptableTypeCodes(['', TypeCodeInterface::AUTHOR])
+          ->setTypeCode(TypeCodeInterface::AUTHOR);
+        if ($time_stamp && $time_stamp instanceof TimeStamp) {
+            $this->setTime($time_stamp);
+        }
+        if ($assignedAuthor && $assignedAuthor instanceof AssignedAuthor) {
+            $this->setAssignedAuthor($assignedAuthor);
+        }
     }
 
-    public function setTime(TimeStamp $time)
-    {
-        $this->time = $time;
-        
-        return $this;
-    }
-
-    public function setAssignedAuthors($assignedAuthors)
-    {
-        $this->assignedAuthors = is_array($assignedAuthors) ? $assignedAuthors 
-            : array($assignedAuthors);
-        
-        return $this;
-    }
-
-    protected function getElementTag(): string
-    {
-        return 'author';
-    }
-    
-    public function getTypeCode()
-    {
-        return 'AUT';
-    }
-
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         $el = $this->createElement($doc);
-        
-        $el->appendChild((new Time($this->time))->toDOMElement($doc));
-        
-        foreach ($this->assignedAuthors as $assignedAuthor) {
-            $el->appendChild($assignedAuthor->toDOMElement($doc));
-        }
-        
+        $this->renderFunctionCodedValue($el, $doc)
+          ->renderTime($el, $doc)
+          ->renderAssignedAuthor($el, $doc);
         return $el;
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'author';
     }
 }

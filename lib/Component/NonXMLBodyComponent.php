@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -17,7 +17,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -26,13 +26,11 @@
 
 namespace PHPHealth\CDA\Component;
 
-use PHPHealth\CDA\DataType\TextAndMultimedia\EncapsuledData;
 use PHPHealth\CDA\ClinicalDocument as CD;
+use PHPHealth\CDA\DataType\TextAndMultimedia\EncapsuledData;
 
 /**
  * Component which contains unstructured content
- *
- *
  *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
@@ -43,29 +41,48 @@ class NonXMLBodyComponent extends AbstractComponent
      * @var EncapsuledData
      */
     private $content;
-    
-    public function getContent()
+
+    /**
+     * @return EncapsuledData
+     */
+    public function getContent(): EncapsuledData
     {
         return $this->content;
     }
 
-    public function setContent(EncapsuledData $content)
+    /**
+     * @param EncapsuledData $content
+     *
+     * @return self
+     */
+    public function setContent(EncapsuledData $content): self
     {
         $this->content = $content;
-        
         return $this;
     }
 
-        
-    public function toDOMElement(\DOMDocument $doc)
-    {
-        $component = $doc->createElement(CD::NS_CDA.'nonXMLBody');
-        $text = $doc->createElement(CD::NS_CDA.'text');
-        
-        $this->content->setValueToElement($text);
 
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
+    public function toDOMElement(\DOMDocument $doc): \DOMElement
+    {
+        $component = $this->createElement($doc);
+        $text      = $doc->createElement(CD::NS_CDA . 'text');
+        $this->content->setValueToElement($text, $doc);
         $component->appendChild($text);
-        
         return $component;
+    }
+
+    /**
+     * get the element tag name
+     *
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'nonXMLBody';
     }
 }

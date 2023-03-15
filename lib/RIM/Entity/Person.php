@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -17,7 +17,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -26,61 +26,71 @@
 
 namespace PHPHealth\CDA\RIM\Entity;
 
-use PHPHealth\CDA\ElementInterface;
-use PHPHealth\CDA\ClinicalDocument as CDA;
-use PHPHealth\CDA\DataType\Quantity\DateAndTime\TimeStamp;
-use PHPHealth\CDA\DataType\Collection\Set;
-use PHPHealth\CDA\Elements\AdministrativeGenderCode;
 use PHPHealth\CDA\DataType\Code\CodedValue;
-use PHPHealth\CDA\Elements\BirthTime;
+use PHPHealth\CDA\DataType\Collection\Set;
+use PHPHealth\CDA\DataType\Quantity\DateAndTime\TimeStamp;
+use PHPHealth\CDA\Interfaces\ClassCodeInterface;
+use PHPHealth\CDA\Traits\DeceasedPersonTrait;
 
 /**
- *
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
 abstract class Person extends LivingSubject
 {
+    use DeceasedPersonTrait;
+
+    /**
+     * Person constructor.
+     *
+     * @param Set|NULL        $names
+     * @param TimeStamp|NULL  $birth_time
+     * @param CodedValue|NULL $administrativeGenderCode
+     */
     public function __construct(
-        Set $names = null,
-        TimeStamp $birthtime = null,
-        CodedValue $administrativeGenderCode = null
+      Set $names = null,
+      TimeStamp $birth_time = null,
+      CodedValue $administrativeGenderCode = null
     ) {
-        if ($names !== null) {
+        if ($names) {
             $this->setNames($names);
         }
-        if ($birthtime !== null) {
-            $this->setBirthtime($birthtime);
+        if ($birth_time) {
+            $this->setBirthTime($birth_time);
         }
-        if ($administrativeGenderCode !== null) {
+        if ($administrativeGenderCode) {
             $this->setAdministrativeGenderCode($administrativeGenderCode);
         }
-    }
-    
-    public function getDefaultClassCode()
-    {
-        return 'PSN';
+        $this->setAcceptableClassCodes(ClassCodeInterface::EntityClass)
+          ->setClassCode(ClassCodeInterface::PERSON);
     }
 
-            
-    public function toDOMElement(\DOMDocument $doc)
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
+    public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
-        $el = parent::createElement($doc);
-        //add names
-        if ($this->getNames() !== null) {
+        $el = $this->createElement($doc);
+        if ($this->hasNames()) {
             $this->getNames()->setValueToElement($el, $doc);
         }
-        // add administrative gender code
-        if ($this->getAdministrativeGenderCode() !== null) {
-            $adm = new AdministrativeGenderCode($this->administrativeGenderCode);
-            $el->appendChild($adm->toDOMElement($doc));
-        }
-        // add birthtime
-        if ($this->getBirthtime() !== null) {
-            $bir = new BirthTime($this->birthtime);
-            $el->appendChild($bir->toDOMElement($doc));
-        }
-        
+        $this->renderAdministrativeGenderCode($el, $doc)
+          ->renderBirthTime($el, $doc)
+          ->renderEthnicGroup($el, $doc)
+          ->renderMultipleBirths($el, $doc)
+          ->renderDeceasedPerson($el, $doc)
+          ->renderBirthPlace($el, $doc)
+          ->renderAsEntityIdentifier($el, $doc);
         return $el;
     }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getElementTag(): string
+    {
+        return 'person';
+    }
+
 }

@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -16,35 +16,47 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\DataType\Code;
 
 use PHPHealth\CDA\ClinicalDocument as CDA;
-
-use PHPHealth\CDA\DataType\Code\CodedSimple;
+use PHPHealth\CDA\Interfaces\NullFlavourInterface;
 
 /**
- * 
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
-class NullCode extends CodedSimple
+class NullCode extends CodedSimple implements NullFlavourInterface
 {
     protected $flavor;
-    
-    public function __construct($flavor)
+    /** @noinspection MagicMethodsValidityInspection */
+    /** @noinspection PhpMissingParentConstructorInspection */
+
+    /**
+     * NullCode constructor.
+     *
+     * @param $flavour
+     */
+    public function __construct($flavour)
     {
-        $this->flavor = $flavor;
+        if (\in_array($flavour, NullFlavourInterface::flavours, true) === false) {
+            throw new \InvalidArgumentException("The flavour attribute {$flavour} is not valid!");
+        }
+        $this->flavor = $flavour;
     }
-    
-    public function setValueToElement(\DOMElement &$el, \DOMDocument $doc = null)
+
+    /**
+     * @param \DOMElement       $el
+     * @param \DOMDocument|NULL $doc
+     */
+    public function setValueToElement(\DOMElement $el, \DOMDocument $doc)
     {
-        $el->setAttribute(CDA::NS_CDA.'nullFlavor', $this->flavor);
+        $el->setAttribute(CDA::NS_CDA . 'nullFlavor', $this->flavor);
     }
 
 }

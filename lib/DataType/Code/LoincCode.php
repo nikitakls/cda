@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 julien.fastre@champs-libres.coop
@@ -16,15 +16,14 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace PHPHealth\CDA\DataType\Code;
 
-use PHPHealth\CDA\DataType\Code\CodedValue;
+namespace PHPHealth\CDA\DataType\Code;
 
 /**
  * Template for Loinc Code
@@ -33,35 +32,42 @@ use PHPHealth\CDA\DataType\Code\CodedValue;
  */
 class LoincCode extends CodedValue
 {
-    const CODE_SYSTEM = '2.16.840.1.113883.6.1';
+    const CODE_SYSTEM      = '2.16.840.1.113883.6.1';
     const CODE_SYSTEM_NAME = 'LOINC';
-    
+
+    /**
+     * LoincCode constructor.
+     *
+     * @param $code
+     * @param $displayName
+     */
     public function __construct(
-        $code, 
-        $displayName
+      $code,
+      $displayName
     ) {
         parent::__construct(
-            $code, 
-            $displayName, 
-            self::CODE_SYSTEM, 
-            self::CODE_SYSTEM_NAME
-            );
+          $code,
+          $displayName,
+          self::CODE_SYSTEM,
+          self::CODE_SYSTEM_NAME
+        );
     }
-    
+
     /**
-     * 
-     * @param type $code
-     * @param type $displayName
+     *
+     * @param $code
+     * @param $displayName
+     *
      * @return CodedValue
      * @deprecated since 2017-01-01 use the constructor instead
      */
-    public static function create($code, $displayName)
+    public static function create($code, $displayName): CodedValue
     {
         return new CodedValue(
-            $code,
-            $displayName,
-            self::CODE_SYSTEM,
-            self::CODE_SYSTEM_NAME
+          $code,
+          $displayName,
+          self::CODE_SYSTEM,
+          self::CODE_SYSTEM_NAME
         );
     }
 }

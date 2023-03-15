@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -16,54 +16,49 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\Elements;
 
 use PHPHealth\CDA\DataType\Code\CodedSimple;
 
 /**
- * 
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
-class LanguageCode extends AbstractElement
+class LanguageCode extends Code
 {
+    /** @noinspection MagicMethodsValidityInspection */
+    /** @noinspection PhpMissingParentConstructorInspection */
     /**
+     * LanguageCode constructor.
      *
-     * @var CodedSimple
+     * @param CodedSimple $coded_value
      */
-    protected $code;
-    
-    function __construct(CodedSimple $code)
+    public function __construct(CodedSimple $coded_value)
     {
-        $this->setCode($code);
+        $this->setCodedValue($coded_value);
     }
 
-    
-    function getCode()
-    {
-        return $this->code;
-    }
-
-    function setCode(CodedSimple $code)
-    {
-        $this->code = $code;
-        return $this;
-    }
-
-        
-    protected function getElementTag(): string
-    {
-        return 'languageCode';
-    }
-
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
-        return $this->createElement($doc, ['code']);
+        return $this->createElement($doc, ['codedValue']);
+    }
+
+    /**
+     * @return string
+     */
+    public function getElementTag(): string
+    {
+        return 'languageCode';
     }
 }

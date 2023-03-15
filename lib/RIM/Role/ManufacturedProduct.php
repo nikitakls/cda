@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -16,66 +16,165 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\RIM\Role;
 
-use PHPHealth\CDA\RIM\Entity\DrugOrMaterial;
+use PHPHealth\CDA\Interfaces\ClassCodeInterface;
+use PHPHealth\CDA\RIM\Entity\ManufacturedLabeledDrug;
+use PHPHealth\CDA\RIM\Entity\ManufacturedMaterial;
+use PHPHealth\CDA\RIM\Entity\Organization;
 
 /**
- * 
+ * Class ManufacturedProduct
  *
- * @author Julien Fastré <julien.fastre@champs-libres.coop>
+ * @package PHPHealth\CDA\RIM\Role
  */
 class ManufacturedProduct extends Role
 {
-    /**
-     *
-     * @var DrugOrMaterial
-     */
+
+    /** @var ManufacturedLabeledDrug */
+    protected $manufacturedLabeledDrug;
+    /** @var ManufacturedMaterial */
+    protected $manufacturedMaterial;
+
+    /** @var Organization */
+    protected $manufacturerOrganization;
     protected $manufacturedDrugOrOther;
-    
-    function __construct(DrugOrMaterial $manufacturedDrugOrOther)
+
+    /**
+     * ManufacturedProduct constructor.
+     *
+     * @param null $drug
+     */
+    public function __construct($drug = null)
     {
-        $this->setManufacturedDrugOrOther($manufacturedDrugOrOther);
-    }
-    
-    
-    public function getManufacturedDrugOrOther()
-    {
-        return $this->manufacturedDrugOrOther;
+        $this->setAcceptableClassCodes(ClassCodeInterface::RoleClassManufacturedProduct)
+          ->setClassCode(ClassCodeInterface::MANUFACTURED_PRODUCT);
+        if ($drug instanceof ManufacturedLabeledDrug) {
+            $this->setManufacturedLabeledDrug($drug);
+        } elseif ($drug instanceof ManufacturedMaterial) {
+            $this->setManufacturedMaterial($drug);
+        }
     }
 
-    public function setManufacturedDrugOrOther(DrugOrMaterial $manufacturedDrugOrOther)
+
+    /**
+     * @return bool
+     */
+    public function hasManufacturedDrugOrOther(): bool
     {
-        $this->manufacturedDrugOrOther = $manufacturedDrugOrOther;
-        return $this;
+        return null !== $this->manufacturedDrugOrOther;
     }
 
-        
-    protected function getElementTag(): string
-    {
-        return 'manufacturedProduct';
-    }
-
-    public function getClassCode(): string
-    {
-        return 'MANU';
-    }
-
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         $el = $this->createElement($doc);
-        
-        if ($this->getManufacturedDrugOrOther() !== null) {
-            $el->appendChild($this->getManufacturedDrugOrOther()
-                ->toDOMElement($doc));
+        $this->renderIds($el, $doc);
+        if ($this->hasManufacturedLabeledDrug()) {
+            $el->appendChild($this->getManufacturedLabeledDrug()->toDOMElement($doc));
+        } elseif ($this->hasManufacturedMaterial()) {
+            $el->appendChild($this->getManufacturedMaterial()->toDOMElement($doc));
         }
-        
+        if ($this->hasManufacturerOrganization()) {
+            $el->appendChild($this->getManufacturerOrganization()->toDOMElement($doc));
+        }
         return $el;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasManufacturedLabeledDrug(): bool
+    {
+        return null !== $this->manufacturedLabeledDrug;
+    }
+
+    /**
+     * @return ManufacturedLabeledDrug
+     */
+    public function getManufacturedLabeledDrug(): ManufacturedLabeledDrug
+    {
+        return $this->manufacturedLabeledDrug;
+    }
+
+    /**
+     * @param ManufacturedLabeledDrug $manufacturedLabeledDrug
+     *
+     * @return ManufacturedProduct
+     */
+    public function setManufacturedLabeledDrug(ManufacturedLabeledDrug $manufacturedLabeledDrug): self
+    {
+        $this->manufacturedLabeledDrug = $manufacturedLabeledDrug;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasManufacturedMaterial(): bool
+    {
+        return null !== $this->manufacturedMaterial;
+    }
+
+    /**
+     * @return ManufacturedMaterial
+     */
+    public function getManufacturedMaterial(): ManufacturedMaterial
+    {
+        return $this->manufacturedMaterial;
+    }
+
+    /**
+     * @param ManufacturedMaterial $manufacturedMaterial
+     *
+     * @return ManufacturedProduct
+     */
+    public function setManufacturedMaterial(ManufacturedMaterial $manufacturedMaterial): self
+    {
+        $this->manufacturedMaterial = $manufacturedMaterial;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasManufacturerOrganization(): bool
+    {
+        return null !== $this->manufacturerOrganization;
+    }
+
+    /**
+     * @return Organization
+     */
+    public function getManufacturerOrganization(): Organization
+    {
+        return $this->manufacturerOrganization;
+    }
+
+    /**
+     * @param Organization $manufacturerOrganization
+     */
+    public function setManufacturerOrganization(Organization $manufacturerOrganization)
+    {
+        $this->manufacturerOrganization = $manufacturerOrganization;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'manufacturedProduct';
     }
 }

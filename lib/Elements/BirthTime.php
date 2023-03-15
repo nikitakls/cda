@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -17,7 +17,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -29,8 +29,6 @@ namespace PHPHealth\CDA\Elements;
 use PHPHealth\CDA\DataType\Quantity\DateAndTime\TimeStamp;
 
 /**
- *
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
 class BirthTime extends AbstractElement
@@ -40,31 +38,51 @@ class BirthTime extends AbstractElement
      * @var TimeStamp
      */
     protected $datetime;
-    
+
+    /**
+     * BirthTime constructor.
+     *
+     * @param TimeStamp $datetime
+     */
     public function __construct(TimeStamp $datetime)
     {
         $this->setDatetime($datetime);
     }
-    
-    public function getDatetime()
+
+    /**
+     * @return TimeStamp
+     */
+    public function getDatetime(): TimeStamp
     {
         return $this->datetime;
     }
 
-    public function setDatetime(TimeStamp $datetime)
+    /**
+     * @param TimeStamp $datetime
+     *
+     * @return self
+     */
+    public function setDatetime(TimeStamp $datetime): self
     {
         $this->datetime = $datetime;
         return $this;
     }
 
-        
-    protected function getElementTag()
-    {
-        return 'birthTime';
-    }
-
-    public function toDOMElement(\DOMDocument $doc)
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
+    public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         return $this->createElement($doc, array('datetime'));
+    }
+
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'birthTime';
     }
 }

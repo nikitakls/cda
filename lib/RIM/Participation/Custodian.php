@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -16,72 +16,58 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\RIM\Participation;
 
-use PHPHealth\CDA\RIM\Role\AssignedCustodian;
+use PHPHealth\CDA\Interfaces\TypeCodeInterface;
+use PHPHealth\CDA\RIM\Entity\AssignedCustodian;
+use PHPHealth\CDA\Traits\AssignedCustodianTrait;
 
 /**
- * 
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
 class Custodian extends Participation
 {
+    use AssignedCustodianTrait;
+
     /**
+     * Custodian constructor.
      *
-     * @var AssignedCustodian
+     * @param AssignedCustodian $assignedCustodian
      */
-    protected $assignedCustodian;
-    
     public function __construct(AssignedCustodian $assignedCustodian)
     {
-        $this->setAssignedCustodian($assignedCustodian);
-    }
-    
-    /**
-     * 
-     * @return AssignedCustodian
-     */
-    public function getAssignedCustodian(): AssignedCustodian
-    {
-        return $this->assignedCustodian;
+        $this->setAcceptableTypeCodes(['', TypeCodeInterface::CUSTODIAN])
+          ->setAssignedCustodian($assignedCustodian)
+          ->setTypeCode(TypeCodeInterface::CUSTODIAN);
     }
 
     /**
-     * 
-     * @param AssignedCustodian $assignedCustodian
-     * @return $this
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
      */
-    public function setAssignedCustodian(AssignedCustodian $assignedCustodian)
-    {
-        $this->assignedCustodian = $assignedCustodian;
-        
-        return $this;
-    }
-
-        
-    protected function getElementTag(): string
-    {
-        return 'custodian';
-    }
-    
-    public function getTypeCode()
-    {
-        return 'CST';
-    }
-
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         $el = $this->createElement($doc);
-        
+
         $el->appendChild($this->getAssignedCustodian()->toDOMElement($doc));
-        
+
         return $el;
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'custodian';
     }
 }

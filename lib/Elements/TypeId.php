@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -17,7 +17,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -27,48 +27,41 @@
 namespace PHPHealth\CDA\Elements;
 
 use PHPHealth\CDA\DataType\Identifier\InstanceIdentifier;
+use PHPHealth\CDA\Traits\InstanceIdentifierTrait;
 
 /**
- *
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
 class TypeId extends AbstractElement
 {
+    use InstanceIdentifierTrait;
+
     /**
+     * TypeId constructor.
      *
-     * @var InstanceIdentifier
+     * @param InstanceIdentifier $identifier
      */
-    protected $identifier;
-    
     public function __construct(InstanceIdentifier $identifier)
     {
         $this->setIdentifier($identifier);
-    }
-    
-    public function getIdentifier()
-    {
-        return $this->identifier;
-    }
-
-    public function setIdentifier(InstanceIdentifier $identifier)
-    {
-        $this->identifier = $identifier;
-        return $this;
     }
 
     /**
      * {@overrideDoc}
      *
      * @param \DOMDocument $doc
-     * @return type
+     *
+     * @return \DOMElement
      */
-    public function toDOMElement(\DOMDocument $doc)
+    public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
-        return $this->createElement($doc, array('identifier'));
+        return $this->createElement($doc, array('instance_identifier'));
     }
 
-    protected function getElementTag()
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
     {
         return 'typeId';
     }

@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -16,27 +16,34 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\DataType\Code;
 
 /**
- * 
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
 class SnomedCTCode extends CodedValue
 {
-    const CODE_SYSTEM = '2.16.840.1.113883.6.96';
+    const CODE_SYSTEM      = '2.16.840.1.113883.6.96';
     const CODE_SYSTEM_NAME = 'SNOMED CT';
-    
+
+    /**
+     * SnomedCTCode constructor.
+     *
+     * @param $code
+     * @param $displayName
+     */
     public function __construct($code, $displayName)
     {
-        parent::__construct($code, $displayName, self::CODE_SYSTEM, 
-            self::CODE_SYSTEM_NAME);
+        parent::__construct($code,
+          $displayName,
+          self::CODE_SYSTEM,
+          self::CODE_SYSTEM_NAME);
     }
 }

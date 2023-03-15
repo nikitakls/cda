@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -16,21 +16,19 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\Elements;
 
-use PHPHealth\CDA\Elements\AbstractElement;
 use PHPHealth\CDA\DataType\Collection\Interval\AbstractInterval;
 use PHPHealth\CDA\DataType\Quantity\PhysicalQuantity\PhysicalQuantity;
 
 /**
- * 
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
 class DoseQuantity extends AbstractElement
@@ -40,50 +38,63 @@ class DoseQuantity extends AbstractElement
      * @var AbstractInterval|PhysicalQuantity
      */
     protected $quantity;
-    
+
+    /**
+     * DoseQuantity constructor.
+     *
+     * @param $quantity
+     */
     public function __construct($quantity)
     {
         $this->setQuantity($quantity);
     }
-    
+
     /**
-     * 
+     *
      * @return AbstractInterval|PhysicalQuantity
      */
-    function getQuantity()
+    public function getQuantity()
     {
         return $this->quantity;
     }
 
-    function setQuantity($quantity)
+    /**
+     * @param $quantity
+     *
+     * @return self
+     */
+    public function setQuantity($quantity): self
     {
         if (!
-            ( 
-            $quantity instanceof PhysicalQuantity 
-            || 
-            $quantity instanceof AbstractInterval
-            )
-            ) {
-            throw new \UnexpectedValueException(sprintf("The value of quantity"
-                . " should be an instance of %s or %s", PhysicalQuantity::class,
-                AbstractInterval::class));
+        (
+          $quantity instanceof PhysicalQuantity
+          || $quantity instanceof AbstractInterval
+        )
+        ) {
+            throw new \UnexpectedValueException(sprintf('The value of quantity should be an instance of %s or %s',
+              PhysicalQuantity::class, AbstractInterval::class));
         }
-        
+
         $this->quantity = $quantity;
-        
+
         return $this;
     }
 
-        
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
+    public function toDOMElement(\DOMDocument $doc): \DOMElement
+    {
+        return $this->createElement($doc, ['quantity']);
+    }
+
+    /**
+     * @return string
+     */
     protected function getElementTag(): string
     {
         return 'doseQuantity';
-    }
-
-    public function toDOMElement(\DOMDocument $doc): \DOMElement
-    {
-        $el = $this->createElement($doc, ['quantity']);
-        
-        return $el;
     }
 }

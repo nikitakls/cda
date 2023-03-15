@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -17,7 +17,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -25,6 +25,8 @@
  */
 
 namespace PHPHealth\CDA\DataType\TextAndMultimedia;
+
+use PHPHealth\CDA\DataType\AnyType;
 
 /**
  *
@@ -44,7 +46,7 @@ namespace PHPHealth\CDA\DataType\TextAndMultimedia;
  *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
-class BinaryData extends \PHPHealth\CDA\DataType\AnyType
+class BinaryData extends AnyType
 {
     /**
      * the content
@@ -52,21 +54,43 @@ class BinaryData extends \PHPHealth\CDA\DataType\AnyType
      * @var mixed
      */
     private $content;
-    
+
+    /**
+     * @param \DOMElement       $el
+     * @param \DOMDocument|NULL $doc
+     */
+    public function setValueToElement(\DOMElement $el, \DOMDocument $doc)
+    {
+        $content = new \DOMText($this->getContent());
+        $el->appendChild($content);
+    }
+
+    /**
+     * @return mixed
+     */
     public function getContent()
     {
         return $this->content;
     }
 
+    /** @noinspection ReturnTypeCanBeDeclaredInspection */
+
+    /**
+     * @param $content
+     *
+     * @return self
+     */
     public function setContent($content)
     {
         $this->content = $content;
         return $this;
     }
-    
-    public function setValueToElement(\DOMElement &$el, \DOMDocument $doc = null)
+
+    public function returnEncapsuledData(): EncapsuledData
     {
-        $content = new \DOMText($this->getContent());
-        $el->appendChild($content);
+        if ($this instanceof EncapsuledData) {
+            return $this;
+        }
+        throw new \RuntimeException('This call is only valid from an Encapsuled data object');
     }
 }

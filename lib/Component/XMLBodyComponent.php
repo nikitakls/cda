@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -16,67 +16,80 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\Component;
 
-use PHPHealth\CDA\HasClassCode;
-
-use PHPHealth\CDA\ClinicalDocument as CDA;
+use PHPHealth\CDA\Interfaces\ClassCodeInterface;
+use PHPHealth\CDA\Interfaces\MoodCodeInterface;
+use PHPHealth\CDA\Traits\ClassCodeTrait;
+use PHPHealth\CDA\Traits\MoodCodeTrait;
+use PHPHealth\CDA\Traits\SingleComponentTrait;
 
 /**
- * 
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
-class XMLBodyComponent extends AbstractComponent implements HasClassCode
+class XMLBodyComponent extends AbstractComponent implements ClassCodeInterface, MoodCodeInterface
 {
+    use SingleComponentTrait;
+    use ClassCodeTrait;
+    use MoodCodeTrait;
+
     /**
+     * XMLBodyComponent constructor.
      *
-     * @var AbstractComponent[]
+     * @param null $component
      */
-    private $components = array();
-    
-    public function getComponents(): array
+    public function __construct($component = null)
     {
-        return $this->components;
+        $acceptable_values = array(
+          '',
+          MoodCodeInterface::EVENT,
+          MoodCodeInterface::GOAL,
+          MoodCodeInterface::INTENT,
+          MoodCodeInterface::PROMISE,
+          MoodCodeInterface::PROPOSAL,
+          MoodCodeInterface::REQUEST
+        );
+        $this->setAcceptableClassCodes(ClassCodeInterface::ActClass)
+          ->setAcceptableMoodCodes($acceptable_values)
+          ->setClassCode(ClassCodeInterface::DOCUMENT_BODY)
+          ->setMoodCode('');
+        if ($component instanceof SingleComponent) {
+            $this->addComponent($component);
+        }
     }
 
-    public function setComponents(array $components)
-    {
-        $this->components = $components;
-        
-        return $this;
-    }
-    
-    public function addComponent(SingleComponent $component)
-    {
-        $this->components[] = $component;
-        
-        return $this;
-    }
-    
-    public function getClassCode(): string
-    {
-        return 'DOCBODY';
-    }
 
-            
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
-        $structuredBody = $doc->createElement(CDA::NS_CDA.'structuredBody');
-        $structuredBody->setAttribute(CDA::NS_CDA.'classCode',
-            $this->getClassCode());
-        
-        
+        $el = $this->createElement($doc);
+
         foreach ($this->getComponents() as $component) {
-            $structuredBody->appendChild($component->toDOMElement($doc));
+            $el->appendChild($component->toDOMElement($doc));
         }
-        
-        return $structuredBody;
+
+        return $el;
+    }
+
+
+    /**
+     * get the element tag name
+     *
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'structuredBody';
     }
 }

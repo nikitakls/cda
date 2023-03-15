@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -17,7 +17,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -26,76 +26,93 @@
 
 namespace PHPHealth\CDA\Elements;
 
-use PHPHealth\CDA\DataType\Quantity\DateAndTime\TimeStamp;
-use PHPHealth\CDA\DataType\Collection\Interval\PeriodicIntervalOfTime;
-use PHPHealth\CDA\DataType\Collection\Interval\IntervalOfTime;
 use PHPHealth\CDA\ClinicalDocument as CDA;
+use PHPHealth\CDA\DataType\Collection\Interval\IntervalOfTime;
+use PHPHealth\CDA\DataType\Collection\Interval\PeriodicIntervalOfTime;
+use PHPHealth\CDA\DataType\Quantity\DateAndTime\TimeStamp;
 
 /**
- *
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
 class EffectiveTime extends AbstractElement
 {
     /**
      *
-     * @var TimeStamp|PeriodicIntervalOfTime
+     * @var TimeStamp|PeriodicIntervalOfTime|IntervalOfTime
      */
     protected $value;
-    
+
     /**
      *
      * @var string
      */
-    protected $operator = '';
-    
+    protected $operator;
+
+    /**
+     * EffectiveTime constructor.
+     *
+     * @param $value
+     */
     public function __construct($value)
     {
+        $this->operator = '';
         $this->setValue($value);
     }
-    
-    
+
+
+    /**
+     * @return TimeStamp|PeriodicIntervalOfTime|IntervalOfTime
+     */
     public function getValue()
     {
         return $this->value;
     }
 
-    public function setValue($value)
+    /**
+     * @param $value
+     *
+     * @return self
+     */
+    public function setValue($value): self
     {
-        if ($value instanceof PeriodicIntervalOfTime 
-            ||
-            $value instanceof TimeStamp
-            ||
-            $value instanceof IntervalOfTime
-            ) {
+        if ($value instanceof PeriodicIntervalOfTime
+            || $value instanceof TimeStamp
+            || $value instanceof IntervalOfTime
+        ) {
             $this->value = $value;
         } else {
-            throw new \UnexpectedValueException(sprintf("The timestamp must "
-                . "implements %s, %s or %s", PeriodicIntervalOfTime::class, 
-                TimeStamp::class, IntervalOfTime::class));
+            throw new \UnexpectedValueException(sprintf('The timestamp must implements %s, %s or %s',
+              PeriodicIntervalOfTime::class, TimeStamp::class, IntervalOfTime::class));
         }
-        
         return $this;
     }
-    
+
+    /**
+     *
+     */
     public function setOperatorAppend()
     {
         $this->operator = 'A';
     }
 
-    public function toDOMElement(\DOMDocument $doc)
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
+    public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         $el = $this->createElement($doc, ['value']);
-        
         if ($this->operator === 'A') {
-            $el->setAttribute(CDA::NS_CDA.'operator', 'A');
+            $el->setAttribute(CDA::NS_CDA . 'operator', 'A');
         }
-        
         return $el;
     }
 
-    protected function getElementTag()
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
     {
         return 'effectiveTime';
     }

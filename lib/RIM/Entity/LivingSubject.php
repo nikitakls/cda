@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 julien.
@@ -16,57 +16,54 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\RIM\Entity;
 
-use PHPHealth\CDA\DataType\Quantity\DateAndTime\TimeStamp;
-use PHPHealth\CDA\DataType\Code\CodedValue;
+use PHPHealth\CDA\Traits\AdministrativeGenderCodeTrait;
+use PHPHealth\CDA\Traits\AsEntityIdentifierTrait;
+use PHPHealth\CDA\Traits\BirthPlaceTrait;
+use PHPHealth\CDA\Traits\BirthTimeTrait;
+use PHPHealth\CDA\Traits\EthnicGroupTrait;
+use PHPHealth\CDA\Traits\MultipleBirthsTrait;
 
 /**
- * 
+ * Class LivingSubject
  *
- * @author julien
+ * @package PHPHealth\CDA\RIM\Entity
  */
 abstract class LivingSubject extends Entity
-{ 
+{
+    use AdministrativeGenderCodeTrait;
+    use BirthTimeTrait;
+    use EthnicGroupTrait;
+    use MultipleBirthsTrait;
+    use BirthPlaceTrait;
+    use AsEntityIdentifierTrait;
+
     /**
+     * @param \DOMDocument $doc
      *
-     * @var TimeStamp
+     * @return \DOMElement
      */
-    protected $birthtime;
-    
-    /**
-     *
-     * @var CodedValue
-     */
-    protected $administrativeGenderCode;
-
-    public function getBirthtime()
+    public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
-        return $this->birthtime;
+        $el = $this->createElement($doc);
+        if ($this->hasNames()) {
+            $this->getNames()->setValueToElement($el, $doc);
+        }
+        $this->renderAdministrativeGenderCode($el, $doc)
+          ->renderBirthTime($el, $doc)
+          ->renderEthnicGroup($el, $doc)
+          ->renderMultipleBirths($el, $doc)
+          ->renderBirthPlace($el, $doc)
+          ->renderAsEntityIdentifier($el, $doc);
+        return $el;
     }
 
-    public function setBirthtime(TimeStamp $birthtime)
-    {
-        $this->birthtime = $birthtime;
-        
-        return $this;
-    }
-
-    public function getAdministrativeGenderCode()
-    {
-        return $this->administrativeGenderCode;
-    }
-
-    public function setAdministrativeGenderCode(CodedValue $administrativeGenderCode)
-    {
-        $this->administrativeGenderCode = $administrativeGenderCode;
-        
-        return $this;
-    }
 }

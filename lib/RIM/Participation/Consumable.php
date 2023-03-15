@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -16,65 +16,56 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\RIM\Participation;
 
+use PHPHealth\CDA\Interfaces\TypeCodeInterface;
 use PHPHealth\CDA\RIM\Role\ManufacturedProduct;
+use PHPHealth\CDA\Traits\ManufacturedProductTrait;
 
 /**
- * 
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
 class Consumable extends Participation
 {
+    use ManufacturedProductTrait;
+
     /**
+     * Consumable constructor.
      *
-     * @var ManufacturedProduct
+     * @param ManufacturedProduct $manufacturedProduct
      */
-    protected $manufacturedProduct;
-    
-    function __construct(ManufacturedProduct $manufacturedProduct)
+    public function __construct(ManufacturedProduct $manufacturedProduct)
     {
-        $this->setManufacturedProduct($manufacturedProduct);
+        $this->setAcceptableTypeCodes(['', TypeCodeInterface::CONSUMABLE])
+          ->setManufacturedProduct($manufacturedProduct)
+          ->setTypeCode(TypeCodeInterface::CONSUMABLE);
     }
 
-    
-    function getManufacturedProduct()
-    {
-        return $this->manufacturedProduct;
-    }
-
-    function setManufacturedProduct(ManufacturedProduct $manufacturedProduct)
-    {
-        $this->manufacturedProduct = $manufacturedProduct;
-        return $this;
-    }
-
-        
-    protected function getElementTag(): string
-    {
-        return 'consumable';
-    }
-
-    public function getTypeCode(): string
-    {
-        return 'CSM';
-    }
-
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         $el = $this->createElement($doc);
-        
-        if ($this->getManufacturedProduct() !== null) {
-            $el->appendChild($this->getManufacturedProduct()->toDOMElement($doc));
-        }
-        
+        $this->renderManufacturedProduct($el, $doc);
         return $el;
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'consumable';
     }
 }

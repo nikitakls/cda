@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -17,7 +17,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -27,6 +27,7 @@
 namespace PHPHealth\CDA\DataType\Code;
 
 use PHPHealth\CDA\ClinicalDocument as CDA;
+use PHPHealth\CDA\DataType\AnyType;
 
 /**
  * A CD represents any kind of concept usually by giving a code defined in a
@@ -40,117 +41,169 @@ use PHPHealth\CDA\ClinicalDocument as CDA;
  *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
-class ConceptDescriptor extends \PHPHealth\CDA\DataType\AnyType
+class ConceptDescriptor extends AnyType
 {
-    
-    private $qualifier;
-        
-    private $translation;
-    
+
     private $codeSystem;
-    
+
     private $codeSystemName;
-    
+
     private $displayName;
-    
+
     private $originalText;
-    
+
     /**
      *
      * @var string
      */
     private $code;
-    
-    public function getCode()
-    {
-        return $this->code;
-    }
 
-    public function setCode($code)
-    {
-        $this->code = $code;
-        
-        return $this;
-    }
-    
-    public function getCodeSystem()
-    {
-        return $this->codeSystem;
-    }
-    
-    public function hasCodeSystem()
-    {
-        return !empty($this->getCodeSystem());
-    }
-
-    public function getCodeSystemName()
-    {
-        return $this->codeSystemName;
-    }
-    
-    public function hasCodeSystemName()
-    {
-        return !empty($this->getCodeSystemName());
-    }
-
-    public function getDisplayName()
-    {
-        return $this->displayName;
-    }
-    
-    public function hasDisplayName()
-    {
-        return !empty($this->getDisplayName());
-    }
-
-    public function getOriginalText()
-    {
-        return $this->originalText;
-    }
-    
-    public function hasOriginalText()
+    /**
+     * @return bool
+     */
+    public function hasOriginalText(): bool
     {
         return !empty($this->getOriginalText());
     }
 
-    public function setCodeSystem($codeSystem)
+    /**
+     * @return mixed
+     */
+    public function getOriginalText()
     {
-        $this->codeSystem = $codeSystem;
-        return $this;
+        return $this->originalText;
     }
 
-    public function setCodeSystemName($codeSystemName)
-    {
-        $this->codeSystemName = $codeSystemName;
-        return $this;
-    }
-
-    public function setDisplayName($displayName)
-    {
-        $this->displayName = $displayName;
-        return $this;
-    }
-
-    public function setOriginalText($originalText)
+    /**
+     * @param $originalText
+     *
+     * @return self
+     */
+    public function setOriginalText($originalText): self
     {
         $this->originalText = $originalText;
         return $this;
     }
 
-    public function setValueToElement(\DOMElement &$el, \DOMDocument $doc = null)
+    /**
+     * @param \DOMElement       $el
+     * @param \DOMDocument|NULL $doc
+     */
+    public function setValueToElement(\DOMElement $el, \DOMDocument $doc)
     {
-        $el->setAttribute(CDA::NS_CDA."code", $this->getCode());
-        
+        $el->setAttribute(CDA::NS_CDA . 'code', $this->getCode());
+
         if ($this->hasDisplayName()) {
-            $el->setAttribute("displayName", $this->getDisplayName());
+            $el->setAttribute('displayName', $this->getDisplayName());
         }
-        
+
         if ($this->hasCodeSystem()) {
-            $el->setAttribute("codeSystem", $this->getCodeSystem());
+            $el->setAttribute('codeSystem', $this->getCodeSystem());
         }
-        
+
         if ($this->hasCodeSystemName()) {
-            $el->setAttribute("codeSystemName", $this->getCodeSystemName());
+            $el->setAttribute('codeSystemName', $this->getCodeSystemName());
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode(): string
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param $code
+     *
+     * @return self
+     */
+    public function setCode($code): self
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasDisplayName(): bool
+    {
+        return !empty($this->getDisplayName());
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDisplayName()
+    {
+        return $this->displayName;
+    }
+
+    /**
+     * @param $displayName
+     *
+     * @return self
+     */
+    public function setDisplayName($displayName): self
+    {
+        $this->displayName = $displayName;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasCodeSystem(): bool
+    {
+        return !empty($this->getCodeSystem());
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCodeSystem()
+    {
+        return $this->codeSystem;
+    }
+
+    /**
+     * @param $codeSystem
+     *
+     * @return self
+     */
+    public function setCodeSystem($codeSystem): self
+    {
+        $this->codeSystem = $codeSystem;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasCodeSystemName(): bool
+    {
+        return !empty($this->getCodeSystemName());
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCodeSystemName()
+    {
+        return $this->codeSystemName;
+    }
+
+    /**
+     * @param $codeSystemName
+     *
+     * @return self
+     */
+    public function setCodeSystemName($codeSystemName): self
+    {
+        $this->codeSystemName = $codeSystemName;
+        return $this;
     }
 }

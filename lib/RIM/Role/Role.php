@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -16,40 +16,27 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\RIM\Role;
 
 use PHPHealth\CDA\Elements\AbstractElement;
+use PHPHealth\CDA\Interfaces\ClassCodeInterface;
+use PHPHealth\CDA\Traits\ClassCodeTrait;
+use PHPHealth\CDA\Traits\IdsTrait;
 
 /**
- * 
+ * Class Role
  *
- * @author Julien Fastré <julien.fastre@champs-libres.coop>
+ * @package PHPHealth\CDA\RIM\Role
  */
-abstract class Role extends AbstractElement 
-    implements \PHPHealth\CDA\HasClassCode
+abstract class Role extends AbstractElement implements ClassCodeInterface
 {
-    
-    
-    /**
-     * 
-     * @param \DOMDocument $doc
-     * @param string[] $properties the name of the properties to apply on element
-     * @return \DOMElement
-     */
-    /*protected function createElement(\DOMDocument $doc, array $properties = array())
-    {
-        $el = parent::createElement($doc, $properties);
-        
-        if (! empty($this->getClassCode())) {
-            $el->setAttribute(CDA::NS_CDA.'classCode', $this->getClassCode());
-        }
-        
-        return $el;
-    }*/
+    use IdsTrait;
+    use ClassCodeTrait;
 }

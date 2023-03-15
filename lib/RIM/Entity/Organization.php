@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 julien.
@@ -16,56 +16,66 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\RIM\Entity;
 
-use PHPHealth\CDA\Elements\Id;
 use PHPHealth\CDA\DataType\Collection\Set;
-use PHPHealth\CDA\DataType\Code\CodedSimple;
+use PHPHealth\CDA\Elements\Id;
+use PHPHealth\CDA\Interfaces\ClassCodeInterface;
+use PHPHealth\CDA\Traits\AddrsTrait;
+use PHPHealth\CDA\Traits\AsEntityIdentifierTrait;
+use PHPHealth\CDA\Traits\TelecomsTrait;
 
 /**
- * 
- *
  * @author julien
  */
 abstract class Organization extends Entity
 {
+    use TelecomsTrait;
+    use AddrsTrait;
+    use AsEntityIdentifierTrait;
+
+
     /**
+     * Organization constructor.
      *
-     * @var CodedSimple
+     * @param Set $names
+     * @param Id  $id
      */
-    protected $classCode = 'ORG';
-    
-    public function __construct(Set $names, Set $ids)
+    public function __construct(Set $names, Id $id)
     {
-        $this->setNames($names);
-        $this->setId($ids);
+        $this->setNames($names)
+          ->addId($id)
+          ->setAcceptableClassCodes(ClassCodeInterface::EntityClassOrganization)
+          ->setClassCode(ClassCodeInterface::ORGANISATION);
     }
 
-    public function getDefaultClassCode()
-    {
-        return $this->classCode;
-    }
 
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         $el = $this->createElement($doc);
-        
-        foreach ($this->getId() as $idValue) {
-            $idElement = new Id($idValue);
-            $el->appendChild($idElement->toDomElement($doc));
-        }
-        
-        foreach ($this->getNames()->get() as $name) {
-            /* @var $name \PHPHealth\CDA\DataType\Name\EntityName */
-            $name->setValueToElement($el, $doc);
-        }
-        
+        $this->renderIds($el, $doc);
+        $this->renderNames($el, $doc);
         return $el;
     }
+
+    /**
+     * @return bool
+     */
+    protected function hasAsEntityIdentifier(): bool
+    {
+        return null !== $this->as_entity_identifier;
+    }
+
 }

@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 julien.
@@ -16,19 +16,20 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace PHPHealth\CDA\Elements;
 
+use PHPHealth\CDA\DataType\Collection\Interval\IntervalOfTime;
+use PHPHealth\CDA\DataType\Collection\Interval\PeriodicIntervalOfTime;
 use PHPHealth\CDA\DataType\Quantity\DateAndTime\TimeStamp;
 
 /**
- * 
- *
  * @author julien
  */
 class Time extends AbstractElement
@@ -38,31 +39,53 @@ class Time extends AbstractElement
      * @var TimeStamp
      */
     protected $time;
-    
-    public function __construct(TimeStamp $time)
+
+    /**
+     * Time constructor.
+     *
+     * @param null $time
+     */
+    public function __construct($time)
     {
         $this->setTime($time);
     }
-    
-    public function getTime(): TimeStamp
+
+    /**
+     * @return TimeStamp|IntervalOfTime
+     */
+    public function getTime()
     {
         return $this->time;
     }
 
-    public function setTime(TimeStamp $time)
+    /**
+     * @param TimeStamp|IntervalOfTime $in
+     *
+     * @return self
+     */
+    public function setTime($in): self
     {
-        $this->time = $time;
-        
+        if ($in instanceof TimeStamp || $in instanceof IntervalOfTime || $in instanceof PeriodicIntervalOfTime) {
+            $this->time = $in;
+        }
         return $this;
     }
 
-    protected function getElementTag(): string
-    {
-        return 'time';
-    }
-
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         return $this->createElement($doc, array('time'));
+    }
+
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'time';
     }
 }

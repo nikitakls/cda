@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -17,7 +17,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -27,30 +27,40 @@
 namespace PHPHealth\CDA\DataType\TextAndMultimedia;
 
 /**
- *
- *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
 class CharacterString extends EncapsuledData
 {
-    
+
+    /**
+     * CharacterString constructor.
+     *
+     * @param $content
+     */
     public function __construct($content)
     {
         $this->setContent($content);
     }
-    
-    public function getMediaType()
-    {
-        return 'text/plain';
-    }
-    
+
+    /**
+     * @param $content
+     *
+     */
     public function setContent($content)
     {
-        if (!is_string($content)) {
-            throw new \InvalidArgumentException("the data should be a string, ".
-                gettype($content)." given.");
+        if (false === \is_string($content)) {
+            throw new \InvalidArgumentException('the data should be a string, ' .
+                                                \gettype($content) . ' given.');
         }
-        
+
         parent::setContent($content);
+    }
+
+    /**
+     * @return string
+     */
+    public function getMediaType(): string
+    {
+        return 'text/plain';
     }
 }

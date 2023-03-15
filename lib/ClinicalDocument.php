@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * The MIT License
  *
  * Copyright 2016 Julien Fastré <julien.fastre@champs-libres.coop>.
@@ -17,7 +17,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -26,426 +26,189 @@
 
 namespace PHPHealth\CDA;
 
-use PHPHealth\CDA\DataType\Quantity\DateAndTime\TimeStamp;
 use PHPHealth\CDA\DataType\Identifier\InstanceIdentifier;
-use PHPHealth\CDA\DataType\Code\CodedValue;
-use PHPHealth\CDA\Elements\Code;
-use PHPHealth\CDA\Elements\Title;
-use PHPHealth\CDA\Elements\EffectiveTime;
-use PHPHealth\CDA\Elements\Id;
-use PHPHealth\CDA\Elements\ConfidentialityCode;
 use PHPHealth\CDA\Elements\TypeId;
-use PHPHealth\CDA\RIM\Participation\RecordTarget;
-use PHPHealth\CDA\RIM\Participation\Author;
-use PHPHealth\CDA\RIM\Participation\Custodian;
-use PHPHealth\CDA\DataType\Code\CodedSimple;
 use PHPHealth\CDA\Helper\ReferenceManager;
+use PHPHealth\CDA\Interfaces\ClassCodeInterface;
+use PHPHealth\CDA\Interfaces\MoodCodeInterface;
+use PHPHealth\CDA\Traits\AuthenticatorTrait;
+use PHPHealth\CDA\Traits\AuthorizationTrait;
+use PHPHealth\CDA\Traits\AuthorsTrait;
+use PHPHealth\CDA\Traits\ClassCodeTrait;
+use PHPHealth\CDA\Traits\CodeTrait;
+use PHPHealth\CDA\Traits\CompletionCodeTrait;
+use PHPHealth\CDA\Traits\ConfidentialityCodeTrait;
+use PHPHealth\CDA\Traits\CopyTimeTrait;
+use PHPHealth\CDA\Traits\CustodianTrait;
+use PHPHealth\CDA\Traits\DataEntererTrait;
+use PHPHealth\CDA\Traits\DocumentationOfsTrait;
+use PHPHealth\CDA\Traits\EffectiveTimeTrait;
+use PHPHealth\CDA\Traits\IdTrait;
+use PHPHealth\CDA\Traits\InformantsTrait;
+use PHPHealth\CDA\Traits\InformationRecipientsTrait;
+use PHPHealth\CDA\Traits\LanguageCodeTrait;
+use PHPHealth\CDA\Traits\LegalAuthenticatorTrait;
+use PHPHealth\CDA\Traits\MoodCodeTrait;
+use PHPHealth\CDA\Traits\ParticipantsTrait;
+use PHPHealth\CDA\Traits\RealmCodesTrait;
+use PHPHealth\CDA\Traits\RecordTargetsTrait;
+use PHPHealth\CDA\Traits\SetIdTrait;
+use PHPHealth\CDA\Traits\TemplateIdsTrait;
+use PHPHealth\CDA\Traits\TitleTrait;
+use PHPHealth\CDA\Traits\TypeIdTrait;
+use PHPHealth\CDA\Traits\VersionNumberTrait;
 
 /**
  * Root class for clinical document
  *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
+ * @author Peter Gee <https://github.com/pgee70>
  */
-class ClinicalDocument
+class ClinicalDocument implements ClassCodeInterface, MoodCodeInterface
 {
-    const NS_CDA = '';
+    const NS_CDA     = '';
     const NS_CDA_URI = 'urn:hl7-org:v3';
     const NS_XSI_URI = 'http://www.w3.org/2001/XMLSchema-instance';
-    
-    
+
+    use RealmCodesTrait;
+    use TypeIdTrait;
+    use TemplateIdsTrait;
+    use IdTrait;
+    use CodeTrait;
+    use TitleTrait;
+    use EffectiveTimeTrait;
+    use ConfidentialityCodeTrait;
+    use LanguageCodeTrait;
+    use SetIdTrait;
+    use VersionNumberTrait;
+    use CompletionCodeTrait;
+    use CopyTimeTrait;
+    use RecordTargetsTrait;
+    use AuthorsTrait;
+    use DataEntererTrait;
+    use InformantsTrait;
+    use CustodianTrait;
+    use InformationRecipientsTrait;
+    use legalAuthenticatorTrait;
+    use AuthenticatorTrait;
+    use ParticipantsTrait;
+    // use InFulfillmentOfsTrait;
+    use DocumentationOfsTrait;
+    // use RelatedDocumentsTrait;
+    use AuthorizationTrait;
+
+    // use ComponentOfTrait;
+    // use ComponentTrait;
+    use ClassCodeTrait;
+    use MoodCodeTrait;
+
     /**
-     * Reference manager assigned to this document
+     * Refeger assigned to this document  *
      *
      * @var ReferenceManager
      */
     private $referenceManager;
-    
-    /**
-     * the templateId of the document. Will be inserted into doc, like
-     *
-     * ```
-     * <typeId>
-     * ```
-     *
-     * TODO : always equals to '2.16.840.1.113883.3.27.1776'
-     *
-     * @var TypeId
-     */
-    private $typeId;
-    
-    /**
-     *
-     * @var InstanceIdentifier[]
-     */
-    private $templateId = array();
-    
-    /**
-     *
-     * @var CodedSimple
-     */
-    private $languageCode;
-    
-    /**
-     * the title of the document
-     *
-     * @var Title
-     */
-    private $title;
-    
     /**
      * the root component
      *
      * @var Component\RootBodyComponent
      */
     private $rootComponent;
-    
+    private $informationRecipient;
+    private $inFulfillmentOf;
+    private $documentationOf;
+    private $relatedDocument;
+
     /**
-     *
-     * @var EffectiveTime
+     * ClinicalDocument constructor.
      */
-    private $effectiveTime;
-    
-    /**
-     *
-     * @var Id
-     */
-    private $id;
-    
-    /**
-     *
-     * @var Code
-     */
-    private $code;
-    
-    /**
-     *
-     * @var RecordTarget
-     */
-    private $recordTarget;
-    
-    /**
-     *
-     * @var ConfidentialityCode
-     */
-    private $confidentialityCode;
-    
-    /**
-     *
-     * @var Custodian
-     */
-    private $custodian;
-    
-    /**
-     *
-     * @var Author
-     */
-    private $author;
-    
     public function __construct()
     {
-        $this->rootComponent = new Component\RootBodyComponent();
+        $this->rootComponent    = new Component\RootBodyComponent();
         $this->referenceManager = new ReferenceManager();
-        
-        $typeIdIdentifier = new InstanceIdentifier(
-            "2.16.840.1.113883.1.3",
-            "POCD_HD000040"
-        );
-        $this->typeId = new TypeId($typeIdIdentifier);
+        $this->setTypeId(new TypeId(new InstanceIdentifier('2.16.840.1.113883.1.3', 'POCD_HD000040')))
+          ->setAcceptableClassCodes(['', ClassCodeInterface::CLINICAL_DOCUMENT])
+          ->setClassCode('')
+          ->setAcceptableMoodCodes(['', MoodCodeInterface::EVENT])
+          ->setMoodCode('');
     }
-    
+
     /**
-     * 
+     *
      * @return ReferenceManager
      */
-    function getReferenceManager(): ReferenceManager
+    public function getReferenceManager(): ReferenceManager
     {
         return $this->referenceManager;
     }
-    
-    /**
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
+
 
     /**
      *
-     * @param \PHPHealth\CDA\Elements\Title $title
-     * @return \PHPHealth\CDA2\ClinicalDocument
-     */
-    public function setTitle(Title $title)
-    {
-        $this->title = $title;
-        
-        return $this;
-    }
-    
-    function getTemplateId(): array
-    {
-        return $this->templateId;
-    }
-
-    function setTemplateId(array $templateId)
-    {
-        $validate = \array_reduce($templateId, function($carry, $item) {
-            if ($carry === false) {
-                return false;
-            }
-            
-            return $item instanceof InstanceIdentifier;
-        });
-        
-        assert($validate, new \UnexpectedValueException());
-        
-        $this->templateId = $templateId;
-        
-        return $this;
-    }
-    
-    function addTtemplateId(InstanceIdentifier $identifier)
-    {
-        $this->templateId[] = $identifier;
-    }
-
-    function getLanguageCode()
-    {
-        return $this->languageCode;
-    }
-
-    function setLanguageCode(CodedSimple $languageCode)
-    {
-        $this->languageCode = $languageCode;
-        
-        return $this;
-    }
-
-            
-    /**
+     * @param \DOMDocument|null $doc
      *
-     * @return EffectiveTime
+     * @return \DOMDocument
      */
-    public function getEffectiveTime()
+    public function toDOMDocument(\DOMDocument $doc = null): \DOMDocument
     {
-        return $this->effectiveTime;
+        $doc = $doc ?? new \DOMDocument('1.0', 'UTF-8');
+        $el  = $doc->createElementNS(self::NS_CDA_URI, 'ClinicalDocument');
+        $doc->appendChild($el);
+        // set the NS
+        $el->setAttributeNS(
+          self::NS_XSI_URI,
+          'xsi:schemaLocation',
+          'CDA-ES-V1_3.xsd'
+        );
+        $el->setAttribute('xmlns:ext', 'http://ns.electronichealth.net.au/Ci/Cda/Extensions/3.0');
+        $el->setAttribute('xmlns:xs', 'http://www.w3.org/2001/XMLSchema');
+        if ($this->hasClassCode()) {
+            $el->setAttribute('classCode', $this->getClassCode());
+        }
+        if ($this->hasMoodCode()) {
+            $el->setAttribute('moodCode', $this->getMoodCode());
+        }
+        $this->renderRealmCodes($el, $doc)
+          ->renderTypeId($el, $doc)
+          ->renderTemplateIds($el, $doc)
+          ->renderId($el, $doc)
+          ->renderCode($el, $doc)
+          ->renderTitle($el, $doc)
+          ->renderEffectiveTime($el, $doc)
+          ->renderConfidentialityCode($el, $doc)
+          ->renderLanguageCode($el, $doc)
+          ->renderSetId($el, $doc)
+          ->renderVersionNumber($el, $doc)
+          ->renderCopyTime($el, $doc)
+          ->renderCompletionCode($el, $doc)
+          ->renderRecordTargets($el, $doc)
+          ->renderAuthors($el, $doc)
+          ->renderDataEnter($el, $doc)
+          ->renderInformants($el, $doc)
+          ->renderCustodian($el, $doc)
+          ->renderInformationRecipients($el, $doc)
+          ->renderLegalAuthenticator($el, $doc)
+          ->renderAuthenticator($el, $doc)
+          ->renderParticipants($el, $doc)
+          // todo inFulfillmentOf
+          ->renderDocumentationOfs($el, $doc)
+          // todo relatedDocument
+          ->renderAuthorization($el, $doc);
+        // todo componentOf
+        // add components
+        if (false === $this->getRootComponent()->isEmpty()) {
+            $el->appendChild($this->getRootComponent()->toDOMElement($doc));
+        }
+        return $doc;
     }
 
-    /**
-     *
-     * @param EffectiveTime $effectiveTime
-     * @return $this
-     */
-    public function setEffectiveTime(EffectiveTime $effectiveTime)
-    {
-        $this->effectiveTime = $effectiveTime;
-        
-        return $this;
-    }
-    
-    /**
-     *
-     * @return Id
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     *
-     * @param Id $id
-     * @return $this
-     */
-    public function setId(Id $id)
-    {
-        $this->id = $id;
-        
-        return $this;
-    }
-
-    /**
-     * Get the code of the document
-     *
-     * @return Code
-     */
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    /**
-     * Set the code of the document
-     *
-     * @param Code $code
-     * @return $this
-     */
-    public function setCode(Code $code)
-    {
-        $this->code = $code;
-        
-        return $this;
-    }
-    
-    /**
-     *
-     * @return ConfidentialityCode
-     */
-    public function getConfidentialityCode()
-    {
-        return $this->confidentialityCode;
-    }
-
-    /**
-     *
-     * @param ConfidentialityCode $confidentialityCode
-     * @return $this
-     */
-    public function setConfidentialityCode(ConfidentialityCode $confidentialityCode)
-    {
-        $this->confidentialityCode = $confidentialityCode;
-        
-        return $this;
-    }
-
-        
     /**
      *
      * @return Component\RootBodyComponent
      */
-    public function getRootComponent()
+    public function getRootComponent(): Component\RootBodyComponent
     {
         return $this->rootComponent;
     }
-    
-    public function getRecordTarget()
-    {
-        return $this->recordTarget;
-    }
 
-    public function setRecordTarget(RecordTarget $recordTarget)
-    {
-        $this->recordTarget = $recordTarget;
-        
-        return $this;
-    }
-    
-    public function getAuthor(): Author
-    {
-        return $this->author;
-    }
-    
-    public function hasAuthor()
-    {
-        return $this->author !== null;
-    }
-
-    public function setAuthor(Author $author)
-    {
-        $this->author = $author;
-        return $this;
-    }
-    
-    /**
-     * 
-     * @return Custodian
-     */
-    public function getCustodian()
-    {
-        return $this->custodian;
-    }
-
-    /**
-     * 
-     * @param Custodian $custodian
-     * @return $this
-     */
-    public function setCustodian(Custodian $custodian)
-    {
-        $this->custodian = $custodian;
-        return $this;
-    }
-
-        
-
-    
-        
-    /**
-     *
-     * @return \DOMDocument
-     */
-    public function toDOMDocument(\DOMDocument $dom = null)
-    {
-        $dom = $dom === null ? new \DOMDocument('1.0', 'UTF-8') : $dom;
-        
-        $doc = $dom->createElementNS(self::NS_CDA_URI, 'ClinicalDocument');
-        $dom->appendChild($doc);
-        // set the NS
-        $doc->setAttributeNS(
-            self::NS_XSI_URI,
-            'xsi:schemaLocation',
-            'urn:hl7-org:v3 CDA.xsd'
-        );
-        // add typeId
-        $doc->appendChild($this->typeId->toDOMElement($dom));
-        
-        // add templateIds
-        foreach ($this->getTemplateId() as $templateId) {
-            $doc->appendChild((new Elements\TemplateId($templateId))
-                ->toDOMElement($dom));
-        }
-        
-        // add id
-        if ($this->getId() !== null) {
-            $doc->appendChild($this->getId()->toDOMElement($dom));
-        }
-        // add code
-        if ($this->getCode() !== null) {
-            $doc->appendChild($this->getCode()->toDOMElement($dom));
-        }
-     
-        // add title
-        if ($this->getTitle() !== null) {
-            $doc->appendChild($this->getTitle()->toDOMElement($dom));
-        }
-        
-        //add effective time
-        if ($this->getEffectiveTime() !== null) {
-            $doc->appendChild($this->getEffectiveTime()->toDOMElement($dom));
-        }
-
-        // add confidentialityCode
-        if ($this->getConfidentialityCode() !== null) {
-            $doc->appendChild($this->confidentialityCode->toDOMElement($dom));
-        }
-        
-        // add language code
-        if ($this->getLanguageCode() !== null) {
-            $doc->appendChild(
-                (new Elements\LanguageCode($this->getLanguageCode()))
-                ->toDOMElement($dom));
-        }
-        
-        // add recordTarget
-        if ($this->getRecordTarget() !== null) {
-            $doc->appendChild($this->recordTarget->toDOMElement($dom));
-        }
-        
-        // add author
-        if ($this->hasAuthor()) {
-            $doc->appendChild($this->getAuthor()->toDOMElement($dom));
-        }
-        
-        if ($this->getCustodian()) {
-            $doc->appendChild($this->getCustodian()->toDOMElement($dom));
-        }
-
-        // add components
-        if (!$this->getRootComponent()->isEmpty()) {
-            $doc->appendChild($this->getRootComponent()->toDOMElement($dom));
-        }
-        
-        return $dom;
-    }
 }

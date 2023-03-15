@@ -1,9 +1,13 @@
 {
-    "name": "php-health/cda",
-    "description": "a package to create cda files",
+    "name": "nikitakls/cda",
+    "description": "A package to create cda files for n3health",
     "type": "library",
     "license": "MIT",
     "authors": [
+        {
+            "name": "Nikita Kolesnikov",
+            "email": "nikitakls@yandex.ru"
+        },
         {
             "name": "Julien Fastré",
             "email": "julien.fastre@champs-libres.coop"

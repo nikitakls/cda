@@ -88,6 +88,6 @@ class VersionNumber extends AbstractElement
      */
     protected function getElementTag(): string
     {
-        return 'version';
+        return 'versionNumber';
     }
 }

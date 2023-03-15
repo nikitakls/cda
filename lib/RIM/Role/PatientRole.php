@@ -77,7 +77,6 @@ class PatientRole extends Role
     ) {
         $this
           ->setAcceptableClassCodes(ClassCodeInterface::RoleClassRoot)
-          ->setClassCode(ClassCodeInterface::PATIENT)
           ->setPatient($patient)
           ->addId($id);
     }

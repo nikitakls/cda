@@ -45,8 +45,7 @@ class RecordTarget extends Participation
     public function __construct(PatientRole $patientRole)
     {
         $this->setAcceptableTypeCodes(['', TypeCodeInterface::RECORD_TARGET])
-          ->setPatientRole($patientRole)
-          ->setTypeCode(TypeCodeInterface::RECORD_TARGET);
+          ->setPatientRole($patientRole);
     }
 
     /**

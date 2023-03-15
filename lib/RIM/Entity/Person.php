@@ -60,8 +60,7 @@ abstract class Person extends LivingSubject
         if ($administrativeGenderCode) {
             $this->setAdministrativeGenderCode($administrativeGenderCode);
         }
-        $this->setAcceptableClassCodes(ClassCodeInterface::EntityClass)
-          ->setClassCode(ClassCodeInterface::PERSON);
+        $this->setAcceptableClassCodes(ClassCodeInterface::EntityClass);
     }
 
     /**

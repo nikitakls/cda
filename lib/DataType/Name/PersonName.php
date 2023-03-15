@@ -34,6 +34,7 @@ use PHPHealth\CDA\Interfaces\UseAttributeInterface;
  */
 class PersonName extends EntityName
 {
+    protected $patronymic;
 
     const HONORIFIC  = 'prefix';
     const FIRST_NAME = 'given';
@@ -86,6 +87,12 @@ class PersonName extends EntityName
                 $partElement = $doc->createElement(CDA::NS_CDA . $part, $value);
                 $name->appendChild($partElement);
             }
+            if($this->patronymic){
+                $q = $doc->createElement('identity:Patronymic');
+                $q->appendChild($doc->createTextNode($this->patronymic));
+                $q->setAttribute('xsi:type', 'ST');
+                $name->appendChild($q);
+            }
             return;
         }
 
@@ -95,4 +102,11 @@ class PersonName extends EntityName
             throw new \InvalidArgumentException('the element does not contains any parts nor string');
         }
     }
+
+    public function addPatronymic($patronymic): self
+    {
+        $this->patronymic = $patronymic;
+        return $this;
+    }
+
 }

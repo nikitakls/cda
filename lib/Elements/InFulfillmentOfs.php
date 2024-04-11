@@ -25,39 +25,70 @@
  * THE SOFTWARE.
  */
 
-namespace PHPHealth\CDA\Elements\Address;
+namespace PHPHealth\CDA\Elements;
+
+use PHPHealth\CDA\DataType\IntegerType;
 
 /**
+ * Class VersionNumber
  *
- * @package     PHPHealth\CDA
- * @author      Peter Gee <https://github.com/pgee70>
- * @link        https://framagit.org/php-health/cda
- *
+ * @package PHPHealth\CDA\Elements
  */
-class State extends BaseState
+class InFulfillmentOfs extends AbstractElement
 {
     /**
-     * State constructor.
-     *
-     * @param string $value
+     * @var
      */
-    public function __construct(string $value)
+    protected $version;
+
+    /**
+     * VersionNumber constructor.
+     *
+     * @param Id $version
+     */
+    public function __construct(Id $id)
     {
-        $values = array(
-            'NSW' => 'New South Wales',
-            'VIC' => 'Victoria',
-            'QLD' => 'Queensland',
-            'SA' => 'South Australia',
-            'WA' => 'Western Australia',
-            'TAS' => 'Tasmania',
-            'NT' => 'Northern Territory',
-            'ACT' => 'Australian Capital Territory',
-            'U' => 'Unknown'
-        );
-        if (array_key_exists($value, $values) === false) {
-            throw new \InvalidArgumentException("The state value $value is not valid!");
-        }
-        parent::__construct($value);
+        $this->setOrder($id);
     }
 
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
+    public function toDOMElement(\DOMDocument $doc): \DOMElement
+    {
+        $el = $this->createElement($doc);
+        $q = $doc->createElement('order');
+        $q->appendChild($this->getOrder()->toDOMElement($doc));
+        $el->appendChild($q);
+        return $el;
+    }
+
+    /**
+     * @return Id
+     */
+    public function getOrder(): Id
+    {
+        return $this->version;
+    }
+
+    /**
+     * @param IntegerType $version
+     *
+     * @return self
+     */
+    public function setOrder(Id $version): self
+    {
+        $this->version = $version;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'inFulfillmentOf';
+    }
 }

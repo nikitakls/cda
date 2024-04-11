@@ -38,6 +38,7 @@ namespace PHPHealth\CDA\RIM\Entity;
 use PHPHealth\CDA\DataType\Name\EntityName;
 use PHPHealth\CDA\Elements\AbstractElement;
 use PHPHealth\CDA\Elements\StandardIndustryClassCode;
+use PHPHealth\CDA\Helper\ItemsEntities;
 use PHPHealth\CDA\Interfaces\ClassCodeInterface;
 use PHPHealth\CDA\Interfaces\DeterminerCodeInterface;
 use PHPHealth\CDA\RIM\Extensions\AsEntityIdentifier;
@@ -45,6 +46,7 @@ use PHPHealth\CDA\RIM\Role\AsOrganizationPartOf;
 use PHPHealth\CDA\Traits\AddrsTrait;
 use PHPHealth\CDA\Traits\AsEntityIdentifierTrait;
 use PHPHealth\CDA\Traits\ClassCodeTrait;
+use PHPHealth\CDA\Traits\CustomTrait;
 use PHPHealth\CDA\Traits\DeterminerCodeTrait;
 use PHPHealth\CDA\Traits\IdsTrait;
 use PHPHealth\CDA\Traits\NamesTrait;
@@ -64,6 +66,7 @@ class RepresentedOrganization extends AbstractElement implements ClassCodeInterf
     use AddrsTrait;
     use ClassCodeTrait;
     use AsEntityIdentifierTrait;
+    use CustomTrait;
 
 
     use DeterminerCodeTrait;
@@ -83,7 +86,7 @@ class RepresentedOrganization extends AbstractElement implements ClassCodeInterf
     public function __construct($name = null, $as_entity_identifier = null)
     {
         $this->setAcceptableClassCodes(ClassCodeInterface::EntityClassOrganization)
-          ->setClassCode(ClassCodeInterface::IDENTITY)
+//          ->setClassCode(ClassCodeInterface::IDENTITY)
           ->setDeterminerCode('');
         if ($name && $name instanceof EntityName) {
             $this->addName($name);
@@ -125,7 +128,7 @@ class RepresentedOrganization extends AbstractElement implements ClassCodeInterf
                 $el->appendChild($id->toDOMElement($doc));
             }
         }
-        $this->renderIds($el, $doc);
+//        $this->renderIds($el, $doc);
         $this->renderNames($el, $doc);
         $this->renderTelecoms($el, $doc);
         $this->renderAddrs($el, $doc);
@@ -136,6 +139,11 @@ class RepresentedOrganization extends AbstractElement implements ClassCodeInterf
         }
         $this->renderAsOrganizationPartOf($el, $doc);
         $this->renderAsEntityIdentifier($el, $doc);
+        if($this->hasItems(ItemsEntities::IDENTITY_RROPS)){
+            foreach ($this->getItems(ItemsEntities::IDENTITY_RROPS) as $item) {
+                $el->appendChild($item->toDOMElement($doc));
+            }
+        }
 
         return $el;
     }

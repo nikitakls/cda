@@ -72,8 +72,8 @@ class Entry extends AbstractElement implements TypeCodeInterface
      */
     public function __construct($choice = null)
     {
-        $this->setAcceptableTypeCodes(TypeCodeInterface::x_ActRelationshipEntry)
-          ->setTypeCode(TypeCodeInterface::COMPONENT);
+        $this->setAcceptableTypeCodes(TypeCodeInterface::x_ActRelationshipEntry);
+//          ->setTypeCode(TypeCodeInterface::COMPONENT);
         if ($choice instanceof Act) {
             $this->setAct($choice);
         } elseif ($choice instanceof Encounter) {

@@ -49,7 +49,7 @@ class DocumentationOf extends AbstractElement implements TypeCodeInterface
     public function __construct(ServiceEvent $service_event)
     {
         $this->setAcceptableTypeCodes(TypeCodeInterface::ActRelationshipType)
-          ->setTypeCode(TypeCodeInterface::DOCUMENTS)
+//          ->setTypeCode(TypeCodeInterface::DOCUMENTS)
           ->setServiceEvent($service_event);
     }
 

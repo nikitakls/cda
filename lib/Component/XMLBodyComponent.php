@@ -58,7 +58,7 @@ class XMLBodyComponent extends AbstractComponent implements ClassCodeInterface, 
         );
         $this->setAcceptableClassCodes(ClassCodeInterface::ActClass)
           ->setAcceptableMoodCodes($acceptable_values)
-          ->setClassCode(ClassCodeInterface::DOCUMENT_BODY)
+//          ->setClassCode(ClassCodeInterface::DOCUMENT_BODY)
           ->setMoodCode('');
         if ($component instanceof SingleComponent) {
             $this->addComponent($component);

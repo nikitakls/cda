@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * The MIT License
  *
@@ -25,39 +24,62 @@
  * THE SOFTWARE.
  */
 
-namespace PHPHealth\CDA\Elements\Address;
+
+namespace PHPHealth\CDA\Traits;
+
+
+use PHPHealth\CDA\Elements\InFulfillmentOfs;
 
 /**
+ * Trait VersionNumberTrait
  *
- * @package     PHPHealth\CDA
- * @author      Peter Gee <https://github.com/pgee70>
- * @link        https://framagit.org/php-health/cda
- *
+ * @package PHPHealth\CDA\Traits
  */
-class State extends BaseState
+trait InFulfillmentOfsTrait
 {
+    /** @var InFulfillmentOfs */
+    private $infull;
+
     /**
-     * State constructor.
+     * @param InFulfillmentOfs $version
      *
-     * @param string $value
+     * @return self
      */
-    public function __construct(string $value)
+    public function setInFulfillmentOfs(InFulfillmentOfs $version): self
     {
-        $values = array(
-            'NSW' => 'New South Wales',
-            'VIC' => 'Victoria',
-            'QLD' => 'Queensland',
-            'SA' => 'South Australia',
-            'WA' => 'Western Australia',
-            'TAS' => 'Tasmania',
-            'NT' => 'Northern Territory',
-            'ACT' => 'Australian Capital Territory',
-            'U' => 'Unknown'
-        );
-        if (array_key_exists($value, $values) === false) {
-            throw new \InvalidArgumentException("The state value $value is not valid!");
+        $this->infull = $version;
+        return $this;
+    }
+
+    /**
+     * @param \DOMElement $el
+     * @param \DOMDocument $doc
+     *
+     * @return VersionNumberTrait
+     */
+    public function renderInFulfillmentOfs(\DOMElement $el, \DOMDocument $doc): self
+    {
+        if ($this->hasInFulfillmentOfs()) {
+            $el->appendChild($this->getInFulfillmentOfs()->toDOMElement($doc));
         }
-        parent::__construct($value);
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasInFulfillmentOfs(): bool
+    {
+        return $this->infull !== null;
+    }
+
+    /**
+     * @return InFulfillmentOfs
+     */
+    public function getInFulfillmentOfs(): InFulfillmentOfs
+    {
+        return $this->infull;
     }
 
 }

@@ -58,7 +58,7 @@ class IntervalOfTime extends AbstractInterval
         if ($high instanceof TimeStamp) {
             $this->setHigh($high);
         }
-        $this->setShowXSIType(true);
+        $this->setShowXSIType(false);
     }
 
     /**

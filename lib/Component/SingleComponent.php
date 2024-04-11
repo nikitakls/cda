@@ -50,8 +50,8 @@ class SingleComponent extends AbstractComponent implements TypeCodeInterface
      */
     public function __construct($sections = null)
     {
-        $this->setAcceptableTypeCodes(['', TypeCodeInterface::COMPONENT])
-          ->setTypeCode(TypeCodeInterface::COMPONENT);
+        $this->setAcceptableTypeCodes(['', TypeCodeInterface::COMPONENT]);
+//          ->setTypeCode(TypeCodeInterface::COMPONENT);
         $this->sections = array();
         if (\is_array($sections)) {
             $this->setSections($sections);

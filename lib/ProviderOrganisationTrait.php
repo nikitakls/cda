@@ -25,33 +25,34 @@
  */
 
 
-namespace PHPHealth\CDA\Traits;
+namespace PHPHealth\CDA;
 
 
-use PHPHealth\CDA\RIM\Act\DocumentationOf;
+use PHPHealth\CDA\RIM\Entity\RepresentedCustodianOrganization;
+use PHPHealth\CDA\RIM\Participation\Custodian;
+use PHPHealth\CDA\RIM\Participation\ProviderOrganisation;
+use PHPHealth\CDA\Traits\CustodianTrait;
 
 /**
- * Trait DocumentationOfsTrait
+ * Trait CustodianTrait
  *
  * @package PHPHealth\CDA\Traits
  */
-trait DocumentationOfsTrait
+trait ProviderOrganisationTrait
 {
-    /** @var DocumentationOf[] */
-    private $documentationOfs = [];
+    /** @var RepresentedCustodianOrganization */
+    private $providerOrganisation;
 
     /**
      * @param \DOMElement  $el
      * @param \DOMDocument $doc
      *
-     * @return self
+     * @return ProviderOrganisationTrait
      */
-    public function renderDocumentationOfs(\DOMElement $el, \DOMDocument $doc): self
+    public function renderProviderOrganisation(\DOMElement $el, \DOMDocument $doc): self
     {
-        if ($this->hasDocumentationOfs()) {
-            foreach ($this->getDocumentationOfs() as $documentation_of) {
-                $el->appendChild($documentation_of->toDOMElement($doc));
-            }
+        if ($this->hasProviderOrganisation()) {
+            $el->appendChild($this->getProviderOrgranisation()->toDOMElement($doc));
         }
         return $this;
     }
@@ -59,43 +60,29 @@ trait DocumentationOfsTrait
     /**
      * @return bool
      */
-    public function hasDocumentationOfs(): bool
+    public function hasProviderOrganisation(): bool
     {
-        return \count($this->documentationOfs) > 0;
+        return null !== $this->providerOrganisation;
     }
 
     /**
-     * @return DocumentationOf[]
+     *
+     * @return RepresentedCustodianOrganization
      */
-    public function getDocumentationOfs(): array
+    public function getProviderOrgranisation(): RepresentedCustodianOrganization
     {
-        return $this->documentationOfs;
+        return $this->providerOrganisation;
     }
 
     /**
-     * @param DocumentationOf[] $documentationOfs
+     *
+     * @param RepresentedCustodianOrganization $provider
      *
      * @return self
      */
-    public function setDocumentationOfs(array $documentationOfs): self
+    public function setProviderOrganisation(RepresentedCustodianOrganization $provider): self
     {
-        foreach ($documentationOfs as $documentation_of) {
-            if ($documentation_of instanceof DocumentationOf) {
-                $this->addComponentOf($documentation_of);
-            }
-        }
+        $this->providerOrganisation = $provider;
         return $this;
     }
-
-    /**
-     * @param DocumentationOf $documentation_of
-     *
-     * @return self
-     */
-    public function addDocumentationOf(DocumentationOf $documentation_of): self
-    {
-        $this->documentationOfs[] = $documentation_of;
-        return $this;
-    }
-
 }

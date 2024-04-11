@@ -1,6 +1,4 @@
 <?php
-
-
 /**
  * The MIT License
  *
@@ -25,39 +23,52 @@
  * THE SOFTWARE.
  */
 
-namespace PHPHealth\CDA\Elements\Address;
+namespace PHPHealth\CDA\Traits;
+
+
+use PHPHealth\CDA\Elements\AbstractElement;
 
 /**
+ * Trait ActTrait
  *
- * @package     PHPHealth\CDA
- * @author      Peter Gee <https://github.com/pgee70>
- * @link        https://framagit.org/php-health/cda
- *
+ * @package PHPHealth\CDA\Traits
  */
-class State extends BaseState
+trait CustomTrait
 {
+    /** @var */
+    private $items = [];
+
     /**
-     * State constructor.
+     * @param \DOMElement  $el
+     * @param \DOMDocument $doc
      *
-     * @param string $value
+     * @return self
      */
-    public function __construct(string $value)
+    public function renderElement(\DOMElement $el, \DOMDocument $doc, string $key): self
     {
-        $values = array(
-            'NSW' => 'New South Wales',
-            'VIC' => 'Victoria',
-            'QLD' => 'Queensland',
-            'SA' => 'South Australia',
-            'WA' => 'Western Australia',
-            'TAS' => 'Tasmania',
-            'NT' => 'Northern Territory',
-            'ACT' => 'Australian Capital Territory',
-            'U' => 'Unknown'
-        );
-        if (array_key_exists($value, $values) === false) {
-            throw new \InvalidArgumentException("The state value $value is not valid!");
+        foreach ($this->getItems($key) as $item) {
+            $el->appendChild($item->toDOMElement($doc));
         }
-        parent::__construct($value);
+        return $this;
+    }
+
+    public function hasItems(string $key): bool
+    {
+        return null !== ($this->items[$key] ?? null);
+    }
+
+    public function getItems(string $key): array
+    {
+        return $this->items[$key] ?? [];
+    }
+
+    public function addItem(AbstractElement $item, string $key): self
+    {
+        if (!isset($items[$key])) {
+            $this->items[$key] = [];
+        }
+        $this->items[$key][] = $item;
+        return $this;
     }
 
 }

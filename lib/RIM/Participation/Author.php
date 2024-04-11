@@ -55,8 +55,8 @@ class Author extends Participation implements ContextControlCodeInterface
       $time_stamp = null,
       $assignedAuthor = null
     ) {
-        $this->setAcceptableTypeCodes(['', TypeCodeInterface::AUTHOR])
-          ->setTypeCode(TypeCodeInterface::AUTHOR);
+//        $this->setAcceptableTypeCodes(['', TypeCodeInterface::AUTHOR])
+//          ->setTypeCode(TypeCodeInterface::AUTHOR);
         if ($time_stamp && $time_stamp instanceof TimeStamp) {
             $this->setTime($time_stamp);
         }

@@ -35,6 +35,12 @@ namespace PHPHealth\CDA\DataType\Code;
  */
 class CodedValue extends CodedWithEquivalents
 {
+    protected $codeSystemVersion;
+    /**
+     * @var string
+     */
+    private $tagName;
+
     /**
      * CodedValue constructor.
      *
@@ -47,11 +53,44 @@ class CodedValue extends CodedWithEquivalents
       $code,
       $displayName,
       $codeSystem,
-      $codeSystemName
+      $codeSystemName,
+      $codeSystemVersion = null
     ) {
-        $this->setCode($code)
-          ->setDisplayName($displayName)
-          ->setCodeSystem($codeSystem)
-          ->setCodeSystemName($codeSystemName);
+        $this->setCode($code);
+        if($displayName){
+            $this->setDisplayName($displayName);
+        }
+        if($codeSystem){
+            $this->setCodeSystem($codeSystem);
+        }
+        if($codeSystemName){
+            $this->setCodeSystemName($codeSystemName);
+        }
+        if($codeSystemVersion){
+            $this->setCodeSystemVersion($codeSystemVersion);
+        }
+    }
+
+    public function setCodeSystemVersion(string $version){
+        $this->codeSystemVersion = $version;
+        return $this;
+    }
+
+    public function setValueToElement(\DOMElement $el, \DOMDocument $doc)
+    {
+        parent::setValueToElement($el, $doc);
+
+        if($this->codeSystemVersion){
+            $el->setAttribute('codeSystemVersion', $this->codeSystemVersion);
+        }
+    }
+
+    public function setTagName(string $tagName){
+        $this->tagName = $tagName;
+    }
+
+    public function getTagName(): string
+    {
+        return $this->tagName;
     }
 }

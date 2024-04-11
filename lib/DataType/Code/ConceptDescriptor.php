@@ -51,6 +51,7 @@ class ConceptDescriptor extends AnyType
     private $displayName;
 
     private $originalText;
+    private $codeSystemVersion;
 
     /**
      *
@@ -103,6 +104,9 @@ class ConceptDescriptor extends AnyType
 
         if ($this->hasCodeSystemName()) {
             $el->setAttribute('codeSystemName', $this->getCodeSystemName());
+        }
+        if ($this->hasCodeSystemVersion()) {
+            $el->setAttribute('codeSystemVersion', $this->getCodeSystemVersion());
         }
     }
 
@@ -174,7 +178,7 @@ class ConceptDescriptor extends AnyType
      *
      * @return self
      */
-    public function setCodeSystem($codeSystem): self
+    public function setCodeSystem(string $codeSystem): self
     {
         $this->codeSystem = $codeSystem;
         return $this;
@@ -204,6 +208,33 @@ class ConceptDescriptor extends AnyType
     public function setCodeSystemName($codeSystemName): self
     {
         $this->codeSystemName = $codeSystemName;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasCodeSystemVersion(): bool
+    {
+        return !empty($this->getCodeSystemVersion());
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCodeSystemVersion()
+    {
+        return $this->codeSystemVersion;
+    }
+
+    /**
+     * @param $codeSystemName
+     *
+     * @return self
+     */
+    public function setCodeSystemVersion(string $version)
+    {
+        $this->codeSystemVersion = $version;
         return $this;
     }
 }

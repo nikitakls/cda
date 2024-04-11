@@ -28,6 +28,7 @@ namespace PHPHealth\CDA\RIM\Role;
 use PHPHealth\CDA\Elements\AbstractElement;
 use PHPHealth\CDA\Interfaces\ClassCodeInterface;
 use PHPHealth\CDA\Traits\ClassCodeTrait;
+use PHPHealth\CDA\Traits\CodeTrait;
 use PHPHealth\CDA\Traits\IdsTrait;
 
 /**
@@ -39,4 +40,5 @@ abstract class Role extends AbstractElement implements ClassCodeInterface
 {
     use IdsTrait;
     use ClassCodeTrait;
+    use CodeTrait;
 }

@@ -36,6 +36,9 @@
 namespace PHPHealth\CDA\Elements;
 
 
+use PHPHealth\CDA\ClinicalDocument as CDA;
+use PHPHealth\CDA\Elements\Html\ReferenceElement;
+
 /**
  * Class OriginalText
  *
@@ -43,6 +46,10 @@ namespace PHPHealth\CDA\Elements;
  */
 class OriginalText extends AbstractSimpleElement
 {
+    private $tag = 'originalText';
+
+    /** @var ReferenceElement */
+    protected $reference_element;
 
     public static function fromString(string $value): OriginalText
     {
@@ -54,7 +61,49 @@ class OriginalText extends AbstractSimpleElement
      */
     protected function getElementTag(): string
     {
-        return 'originalText';
+        return $this->tag;
+    }
+    
+    public function hasReferenceElement(): bool
+    {
+        return null !== $this->reference_element;
+    }
+
+    /**
+     * @return ReferenceElement
+     */
+    public function getReferenceElement(): ReferenceElement
+    {
+        return $this->reference_element;
+    }
+
+    /**
+     * @param ReferenceElement $reference_element
+     *
+     * @return Value
+     */
+    public function setReferenceElement(ReferenceElement $reference_element): self
+    {
+        $this->reference_element = $reference_element;
+        return $this;
+    }
+    
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
+    public function toDOMElement(\DOMDocument $doc): \DOMElement
+    {
+        $el = $this->createElement($doc);
+        if ($this->hasReferenceElement()) {
+            $el->appendChild($this->getReferenceElement()->toDOMElement($doc));
+        }
+        return $el;
+    }
+
+    public function setTag(string $tag){
+        $this->tag = $tag;
     }
 
 }

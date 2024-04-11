@@ -140,7 +140,7 @@ class TableCell extends AbstractElement
      *
      * @return string
      */
-    public function getContent(): string
+    public function getContent()
     {
         return $this->content;
     }
@@ -170,8 +170,13 @@ class TableCell extends AbstractElement
         if ($this->hasReference()) {
             $this->getReference()->setValueToElement($el, $doc);
         }
+        $content = $this->getContent();
+        if(is_string($content)){
+            $el->appendChild($doc->createTextNode($this->getContent()));
+        } else {
+            $el->appendChild($content->toDOMElement($doc));
+        }
 
-        $el->appendChild($doc->createTextNode($this->getContent()));
 
         return $el;
     }

@@ -53,9 +53,12 @@ namespace PHPHealth\CDA\RIM\Role;
 
 
 use PHPHealth\CDA\Elements\Id;
+use PHPHealth\CDA\Helper\ItemsEntities;
 use PHPHealth\CDA\Interfaces\ClassCodeInterface;
+use PHPHealth\CDA\ProviderOrganisationTrait;
 use PHPHealth\CDA\RIM\Entity\Patient;
 use PHPHealth\CDA\Traits\AddrsTrait;
+use PHPHealth\CDA\Traits\CustomTrait;
 use PHPHealth\CDA\Traits\PatientTrait;
 use PHPHealth\CDA\Traits\TelecomsTrait;
 
@@ -64,6 +67,8 @@ class PatientRole extends Role
     use PatientTrait;
     use AddrsTrait;
     use TelecomsTrait;
+    use ProviderOrganisationTrait;
+    use CustomTrait;
 
     /**
      * PatientRole constructor.
@@ -96,6 +101,17 @@ class PatientRole extends Role
                 $el->appendChild($id->toDOMElement($doc));
             }
         }
+        if($this->hasItems(ItemsEntities::IDENTITY_DOC)){
+            foreach ($this->getItems(ItemsEntities::IDENTITY_DOC) as $item) {
+                $el->appendChild($item->toDOMElement($doc));
+            }
+        }
+        if($this->hasItems(ItemsEntities::INSURACE_POLICY)){
+            foreach ($this->getItems(ItemsEntities::INSURACE_POLICY) as $item) {
+                $el->appendChild($item->toDOMElement($doc));
+            }
+        }
+
         if ($this->hasAddrs()) {
             foreach ($this->getAddrs() as $addr) {
                 $el->appendChild($addr->toDOMElement($doc));
@@ -106,10 +122,14 @@ class PatientRole extends Role
                 $el->appendChild($telecom->toDOMElement($doc));
             }
         }
+        if($this->hasProviderOrganisation()){
+            $el->appendChild($this->getProviderOrgranisation()->toDOMElement($doc));
+        }
         $el->appendChild($this->getPatient()->toDOMElement($doc));
 
         return $el;
     }
+
 
 
     /**

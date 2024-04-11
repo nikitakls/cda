@@ -56,8 +56,8 @@ class AssignedPerson extends Person
     /** @noinspection MagicMethodsValidityInspection */
     public function __construct($names = null, $as_entity_identifier = null, $as_employment = null, $as_qualifications = null)
     {
-        $this->setAcceptableClassCodes(ClassCodeInterface::EntityClass)
-          ->setClassCode(ClassCodeInterface::PERSON);
+        $this->setAcceptableClassCodes(ClassCodeInterface::EntityClass);
+//          ->setClassCode(ClassCodeInterface::PERSON);
         if ($names) {
             $this->setNames($names);
         }

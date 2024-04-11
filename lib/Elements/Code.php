@@ -48,6 +48,11 @@ class Code extends AbstractElement implements XSITypeInterface
     const OCCUPATION_CODE_SYSTEM  = '2.16.840.1.113883.13.62';
 
     /**
+     * @var string
+     */
+    private $tag = 'code';
+
+    /**
      * Code constructor.
      *
      * @param CodedValue $codedValue
@@ -1163,13 +1168,17 @@ class Code extends AbstractElement implements XSITypeInterface
         return $el;
     }
 
+    public function setTag(string $tag){
+        $this->tag = $tag;
+    }
+
 
     /**
      * @return string
      */
     public function getElementTag(): string
     {
-        return 'code';
+        return $this->tag;
     }
 
 

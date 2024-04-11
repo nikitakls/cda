@@ -41,6 +41,7 @@ use PHPHealth\CDA\Elements\Address\Addr;
 use PHPHealth\CDA\Elements\Address\Telecom;
 use PHPHealth\CDA\Elements\Code;
 use PHPHealth\CDA\Elements\Id;
+use PHPHealth\CDA\Helper\ItemsEntities;
 use PHPHealth\CDA\Interfaces\ClassCodeInterface;
 use PHPHealth\CDA\RIM\Extensions\AsEntityIdentifier;
 use PHPHealth\CDA\Traits\AddrsTrait;
@@ -49,7 +50,8 @@ use PHPHealth\CDA\Traits\AssignedEntityTrait;
 use PHPHealth\CDA\Traits\AssignedPersonTrait;
 use PHPHealth\CDA\Traits\ClassCodeTrait;
 use PHPHealth\CDA\Traits\CodeTrait;
-use PHPHealth\CDA\Traits\IdTrait;
+use PHPHealth\CDA\Traits\CustomTrait;
+use PHPHealth\CDA\Traits\IdsTrait;
 use PHPHealth\CDA\Traits\RepresentedOrganizationTrait;
 use PHPHealth\CDA\Traits\TelecomsTrait;
 
@@ -60,7 +62,7 @@ use PHPHealth\CDA\Traits\TelecomsTrait;
  */
 class AssignedEntity extends AbstractElement implements ClassCodeInterface
 {
-    use IdTrait;
+    use IdsTrait;
     use CodeTrait;
     use AddrsTrait;
     use TelecomsTrait;
@@ -69,6 +71,7 @@ class AssignedEntity extends AbstractElement implements ClassCodeInterface
     use RepresentedOrganizationTrait;
     use AssignedPersonTrait;
     use ClassCodeTrait;
+    use CustomTrait;
 
     /**
      * AssignedEntity constructor.
@@ -82,7 +85,7 @@ class AssignedEntity extends AbstractElement implements ClassCodeInterface
      * @param RepresentedOrganization $represented_organization
      */
     public function __construct(
-      Id $id,
+      ?Id $id,
       $code = null,
       $addr = null,
       $telecom = null,
@@ -90,9 +93,11 @@ class AssignedEntity extends AbstractElement implements ClassCodeInterface
       $as_entity_identifier = null,
       $represented_organization = null
     ) {
-        $this->setAcceptableClassCodes(['', ClassCodeInterface::ASSIGNED])
-          ->setClassCode('')
-          ->setId($id);
+        $this->setAcceptableClassCodes(['', ClassCodeInterface::ASSIGNED, ClassCodeInterface::POLICY_HOLDER])
+          ->setClassCode('');
+        if($id){
+            $this->addId($id);
+        }
         if ($code && $code instanceof Code) {
             $this->setCode($code);
         }
@@ -122,12 +127,18 @@ class AssignedEntity extends AbstractElement implements ClassCodeInterface
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         $el = $this->createElement($doc);
-        $this->renderId($el, $doc);
+        $this->renderIds($el, $doc);
         $this->renderCode($el, $doc);
         $this->renderAddrs($el, $doc);
         $this->renderTelecoms($el, $doc);
         $this->renderAssignedPerson($el, $doc);
         $this->renderAsEntityIdentifier($el, $doc);
+        if($this->hasItems(ItemsEntities::IDENTITY_DOC_INFO)){
+            foreach ($this->getItems(ItemsEntities::IDENTITY_DOC_INFO) as $item) {
+                $el->appendChild($item->toDOMElement($doc));
+            }
+        }
+
         $this->renderRepresentedOrganization($el, $doc);
         return $el;
     }

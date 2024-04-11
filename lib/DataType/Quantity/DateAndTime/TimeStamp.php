@@ -93,7 +93,7 @@ class TimeStamp extends AbstractQuantity
     {
         $dt         = new \DateTime($in, new \DateTimeZone($tz));
         $time_stamp = new self($dt);
-        $time_stamp->setOffset($tz[0] === '+')
+        $time_stamp->setOffset($tz[0] === '+' || $tz !== 'UTC')
           ->setPrecision($precision);
         return $time_stamp;
     }

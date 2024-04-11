@@ -95,8 +95,8 @@ class AssignedAuthor extends Role
         if ($assigned_person instanceof AssignedPerson) {
             $this->setAssignedPerson($assigned_person);
         }
-        $this->setAcceptableClassCodes(ClassCodeInterface::RoleClassAssociative)
-          ->setClassCode(ClassCodeInterface::ASSIGNED);
+        $this->setAcceptableClassCodes(ClassCodeInterface::RoleClassAssociative);
+//          ->setClassCode(ClassCodeInterface::ASSIGNED);
     }
 
 

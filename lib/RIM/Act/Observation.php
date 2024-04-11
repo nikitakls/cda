@@ -37,6 +37,7 @@ use PHPHealth\CDA\Traits\ReferenceRangesTrait;
 use PHPHealth\CDA\Traits\RepeatNumberTrait;
 use PHPHealth\CDA\Traits\TargetSiteCodesTrait;
 use PHPHealth\CDA\Traits\ValuesTrait;
+use PHPHealth\CDA\Traits\OriginalTextTrait;
 
 /**
  * Class Observation
@@ -52,6 +53,7 @@ class Observation extends Act
     use InterpretationCodesTrait;
     use MethodCodesTrait;
     use ReferenceRangesTrait;
+    use OriginalTextTrait;
 
     /**
      * Observation constructor.
@@ -62,7 +64,7 @@ class Observation extends Act
     public function __construct($code = null, $value = null)
     {
         parent::__construct();
-        $this->setAcceptableClassCodes(array('', ClassCodeInterface::OBSERVATION))
+        $this->setAcceptableClassCodes(array('', ClassCodeInterface::OBSERVATION, ClassCodeInterface::ENCOUNTER))
           ->setAcceptableMoodCodes(MoodCodeInterface::x_ActMoodDocumentObservation)
           ->setMoodCode('')
           ->setClassCode(ClassCodeInterface::OBSERVATION);
@@ -114,6 +116,10 @@ class Observation extends Act
           ->renderReferences($el, $doc)
           ->renderPreconditions($el, $doc)
           ->renderReferenceRanges($el, $doc);
+        if($this->hasOriginalText()){
+            $el->appendChild($this->getOriginalText()->toDOMElement($doc));
+        }
+
         return $el;
     }
 

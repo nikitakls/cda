@@ -25,30 +25,21 @@
  */
 
 
-// TODO implment Location
 namespace PHPHealth\CDA\Traits;
 
 
-trait LocationTrait
+use PHPHealth\CDA\RIM\Act\ComponentOf;
+use PHPHealth\CDA\RIM\Act\DocumentationOf;
+
+/**
+ * Trait DocumentationOfsTrait
+ *
+ * @package PHPHealth\CDA\Traits
+ */
+trait ComponentOfsTrait
 {
-    /** @var */
-    private $location;
-
-    public function getLocation()
-    {
-        return $this->location;
-    }
-
-    /**
-     * @param mixed $location
-     *
-     * @return self
-     */
-    public function setLocation($location): self
-    {
-        $this->location = $location;
-        return $this;
-    }
+    /** @var ComponentOf[] */
+    private $componentOfs = [];
 
     /**
      * @param \DOMElement  $el
@@ -56,11 +47,12 @@ trait LocationTrait
      *
      * @return self
      */
-    public function renderLocation(\DOMElement $el, \DOMDocument $doc): self
+    public function renderComponentOfs(\DOMElement $el, \DOMDocument $doc): self
     {
-        /** @noinspection MissingOrEmptyGroupStatementInspection */
-        if ($this->hasLocation()) {
-             $el->appendChild($this->getLocation()->toDOMElement($doc));
+        if ($this->hasComponentOfs()) {
+            foreach ($this->getComponentOfs() as $documentation_of) {
+                $el->appendChild($documentation_of->toDOMElement($doc));
+            }
         }
         return $this;
     }
@@ -68,9 +60,43 @@ trait LocationTrait
     /**
      * @return bool
      */
-    public function hasLocation(): bool
+    public function hasComponentOfs(): bool
     {
-        return null !== $this->location;
+        return \count($this->componentOfs) > 0;
+    }
+
+    /**
+     * @return DocumentationOf[]
+     */
+    public function getComponentOfs(): array
+    {
+        return $this->componentOfs;
+    }
+
+    /**
+     * @param ComponentOf[] $componentOfs
+     *
+     * @return self
+     */
+    public function setComponentOfs(array $componentOfs): self
+    {
+        foreach ($componentOfs as $documentation_of) {
+            if ($documentation_of instanceof DocumentationOf) {
+                $this->addComponentOf($documentation_of);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @param ComponentOf $componentOf
+     *
+     * @return self
+     */
+    public function addComponentOf(ComponentOf $componentOf): self
+    {
+        $this->componentOfs[] = $componentOf;
+        return $this;
     }
 
 }

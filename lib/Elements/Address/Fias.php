@@ -27,6 +27,8 @@
 
 namespace PHPHealth\CDA\Elements\Address;
 
+use PHPHealth\CDA\Elements\AbstractSimpleElement;
+
 /**
  *
  * @package     PHPHealth\CDA
@@ -34,30 +36,13 @@ namespace PHPHealth\CDA\Elements\Address;
  * @link        https://framagit.org/php-health/cda
  *
  */
-class State extends BaseState
+class Fias extends AbstractSimpleElement
 {
     /**
-     * State constructor.
-     *
-     * @param string $value
+     * @return string
      */
-    public function __construct(string $value)
+    protected function getElementTag(): string
     {
-        $values = array(
-            'NSW' => 'New South Wales',
-            'VIC' => 'Victoria',
-            'QLD' => 'Queensland',
-            'SA' => 'South Australia',
-            'WA' => 'Western Australia',
-            'TAS' => 'Tasmania',
-            'NT' => 'Northern Territory',
-            'ACT' => 'Australian Capital Territory',
-            'U' => 'Unknown'
-        );
-        if (array_key_exists($value, $values) === false) {
-            throw new \InvalidArgumentException("The state value $value is not valid!");
-        }
-        parent::__construct($value);
+        return 'fias:Address';
     }
-
 }

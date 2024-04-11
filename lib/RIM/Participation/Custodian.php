@@ -44,8 +44,8 @@ class Custodian extends Participation
     public function __construct(AssignedCustodian $assignedCustodian)
     {
         $this->setAcceptableTypeCodes(['', TypeCodeInterface::CUSTODIAN])
-          ->setAssignedCustodian($assignedCustodian)
-          ->setTypeCode(TypeCodeInterface::CUSTODIAN);
+          ->setAssignedCustodian($assignedCustodian);
+//          ->setTypeCode(TypeCodeInterface::CUSTODIAN);
     }
 
     /**

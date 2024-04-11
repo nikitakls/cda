@@ -1,10 +1,8 @@
 <?php
-
-
-/**
+/*
  * The MIT License
  *
- * Copyright 2018  Peter Gee <https://github.com/pgee70>.
+ * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -18,46 +16,53 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
 
-namespace PHPHealth\CDA\Elements\Address;
+namespace PHPHealth\CDA\Elements;
+
+use PHPHealth\CDA\DataType\TextAndMultimedia\CharacterString;
 
 /**
  *
- * @package     PHPHealth\CDA
- * @author      Peter Gee <https://github.com/pgee70>
- * @link        https://framagit.org/php-health/cda
  *
+ * @author nikitakls.ru
  */
-class State extends BaseState
+class TableContent extends AbstractElement
 {
+
     /**
-     * State constructor.
-     *
-     * @param string $value
+     * @var CharacterString | string
      */
-    public function __construct(string $value)
+    private $tableContent;
+    private $contentId;
+
+    function __construct($string, $id = null)
     {
-        $values = array(
-            'NSW' => 'New South Wales',
-            'VIC' => 'Victoria',
-            'QLD' => 'Queensland',
-            'SA' => 'South Australia',
-            'WA' => 'Western Australia',
-            'TAS' => 'Tasmania',
-            'NT' => 'Northern Territory',
-            'ACT' => 'Australian Capital Territory',
-            'U' => 'Unknown'
-        );
-        if (array_key_exists($value, $values) === false) {
-            throw new \InvalidArgumentException("The state value $value is not valid!");
+        $this->tableContent = $string;
+        if($id){
+            $this->contentId = $id;
         }
-        parent::__construct($value);
     }
 
+
+    protected function getElementTag(): string
+    {
+        return 'content';
+    }
+
+    public function toDOMElement(\DOMDocument $doc): \DOMElement
+    {
+
+        $el = $this->createElement($doc);
+        if($this->contentId){
+            $el->setAttribute('ID', $this->contentId);
+        }
+        $el->appendChild($doc->createTextNode($this->tableContent));
+        return $el;
+    }
 }

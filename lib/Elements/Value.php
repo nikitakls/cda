@@ -36,11 +36,13 @@
 namespace PHPHealth\CDA\Elements;
 
 
+use phpDocumentor\Reflection\Types\Self_;
 use PHPHealth\CDA\ClinicalDocument as CDA;
 use PHPHealth\CDA\DataType\ValueType;
 use PHPHealth\CDA\Elements\Html\ReferenceElement;
 use PHPHealth\CDA\Interfaces\MediaTypeInterface;
 use PHPHealth\CDA\Interfaces\XSITypeInterface;
+use PHPHealth\CDA\Traits\OriginalTextTrait;
 use PHPHealth\CDA\Traits\ValueTypeTrait;
 use PHPHealth\CDA\Traits\XSITypeTrait;
 
@@ -48,6 +50,7 @@ class Value extends AbstractElement implements XSITypeInterface, MediaTypeInterf
 {
     use ValueTypeTrait;
     use XSITypeTrait;
+    use OriginalTextTrait;
 
     // attributes
 
@@ -74,7 +77,8 @@ class Value extends AbstractElement implements XSITypeInterface, MediaTypeInterf
     protected $high;
     /** @var array */
     protected $tags;
-
+    /** @var string */
+    protected $codeSystemVersion;
     /**
      * Value constructor.
      * XSI types are required for the value tag
@@ -153,6 +157,27 @@ class Value extends AbstractElement implements XSITypeInterface, MediaTypeInterf
         if ($xsi_attribute) {
             $value->setXSIType(XSITypeInterface::CONCEPT_DESCRIPTOR);
         }
+        return $value;
+    }
+
+    public static function CD(string $code, string $displayName, string $codeSystem, string $codeSystemName, ?string $version = null): Value
+    {
+        $value = (new Value())
+            ->setCode($code)
+            ->setDisplayName($displayName)
+            ->setCodeSystem($codeSystem)
+            ->setCodeSystemName($codeSystemName);
+        if($version){
+            $value->setCodeSystemVersion($version);
+        }
+        $value->setXSIType(XSITypeInterface::CONCEPT_DESCRIPTOR);
+        return $value;
+    }
+
+    public static function ST(string $text): Value
+    {
+        $value = new self($text);
+        $value->setXSIType(XSITypeInterface::CHARACTER_STRING);
         return $value;
     }
 
@@ -289,10 +314,17 @@ class Value extends AbstractElement implements XSITypeInterface, MediaTypeInterf
         }
 
         $el = $this->createElement($doc, $attributes);
+        if($this->codeSystemVersion){
+            $el->setAttribute('codeSystemVersion', $this->codeSystemVersion);
+        }
+
         if ($this->content) {
             $el->appendChild(new \DOMText($this->getContent()));
         } elseif ($this->hasReferenceElement()) {
             $el->appendChild($this->getReferenceElement()->toDOMElement($doc));
+        }
+        if($this->hasOriginalText()){
+            $el->appendChild($this->getOriginalText()->toDOMElement($doc));
         }
 
         if ($this->hasLow()) {
@@ -465,4 +497,10 @@ class Value extends AbstractElement implements XSITypeInterface, MediaTypeInterf
         $this->media_type = $media_type;
         return $this;
     }
+
+    public function setCodeSystemVersion(string $version){
+        $this->codeSystemVersion = $version;
+        return $this;
+    }
+
 }

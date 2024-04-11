@@ -1,10 +1,8 @@
 <?php
-
-
-/**
+/*
  * The MIT License
  *
- * Copyright 2018  Peter Gee <https://github.com/pgee70>.
+ * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -18,46 +16,42 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-namespace PHPHealth\CDA\Elements\Address;
+namespace PHPHealth\CDA\Elements;
 
 /**
+ * 
  *
- * @package     PHPHealth\CDA
- * @author      Peter Gee <https://github.com/pgee70>
- * @link        https://framagit.org/php-health/cda
- *
+ * @author Julien Fastré <julien.fastre@champs-libres.coop>
  */
-class State extends BaseState
+class Location extends AbstractElement
 {
-    /**
-     * State constructor.
-     *
-     * @param string $value
-     */
-    public function __construct(string $value)
+    protected $content = '';
+    
+    public function __construct($nullFlavorReason)
     {
-        $values = array(
-            'NSW' => 'New South Wales',
-            'VIC' => 'Victoria',
-            'QLD' => 'Queensland',
-            'SA' => 'South Australia',
-            'WA' => 'Western Australia',
-            'TAS' => 'Tasmania',
-            'NT' => 'Northern Territory',
-            'ACT' => 'Australian Capital Territory',
-            'U' => 'Unknown'
-        );
-        if (array_key_exists($value, $values) === false) {
-            throw new \InvalidArgumentException("The state value $value is not valid!");
-        }
-        parent::__construct($value);
+        $this->content = $nullFlavorReason;
+    }
+    
+
+    protected function getElementTag(): string
+    {
+        return 'location';
     }
 
+    public function toDOMElement(\DOMDocument $doc): \DOMElement
+    {
+        $el = $this->createElement($doc);
+        $id = $doc->createElement('id');
+        $id->setAttribute('nullFlavor', $this->content);
+        $healthCareFacility = $doc->createElement('healthCareFacility');
+        $healthCareFacility->appendChild($id);
+        $el->appendChild($healthCareFacility);
+        return $el;
+    }
 }

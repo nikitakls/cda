@@ -25,6 +25,8 @@
 
 namespace PHPHealth\CDA\Interfaces;
 
+use phpDocumentor\Reflection\Types\Self_;
+
 /**
  *
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
@@ -430,7 +432,9 @@ interface TypeCodeInterface
     );
     const ParticipationPhysicalPerformer = array(
       '',
-      self::PERFORMER
+      self::PERFORMER,
+      self::SECONDARY_PERFORMER,
+      self::PRIMARY_PERFORMER,
     );
 
     const x_ActRelationshipEntry = array(

@@ -27,6 +27,7 @@ namespace PHPHealth\CDA\Elements\Html;
 
 use PHPHealth\CDA\DataType\ReferenceType;
 use PHPHealth\CDA\Elements\AbstractElement;
+use PHPHealth\CDA\Elements\TableContent;
 
 /**
  * @author Julien Fastré <julien.fastre@champs-libres.coop>
@@ -64,7 +65,7 @@ class TableRow extends AbstractElement
 
     /**
      *
-     * @param string $content
+     * @param string | AbstractElement $content
      *
      * @param null   $type
      *

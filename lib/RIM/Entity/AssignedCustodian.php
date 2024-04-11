@@ -42,8 +42,8 @@ class AssignedCustodian extends Entity
      */
     public function __construct($custodianOrganization = null)
     {
-        $this->setAcceptableClassCodes(ClassCodeInterface::RoleClassAssignedEntity)
-          ->setClassCode(ClassCodeInterface::ASSIGNED);
+        $this->setAcceptableClassCodes(ClassCodeInterface::RoleClassAssignedEntity);
+//          ->setClassCode(ClassCodeInterface::ASSIGNED);
         if ($custodianOrganization && $custodianOrganization instanceof RepresentedCustodianOrganization) {
             $this->setRepresentedCustodianOrganization($custodianOrganization);
         }

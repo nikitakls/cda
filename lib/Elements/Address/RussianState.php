@@ -34,30 +34,39 @@ namespace PHPHealth\CDA\Elements\Address;
  * @link        https://framagit.org/php-health/cda
  *
  */
-class State extends BaseState
+class RussianState extends BaseState
 {
-    /**
-     * State constructor.
-     *
-     * @param string $value
-     */
-    public function __construct(string $value)
+    public $name;
+    public $code;
+
+    public function __construct(string $name, int $code)
     {
-        $values = array(
-            'NSW' => 'New South Wales',
-            'VIC' => 'Victoria',
-            'QLD' => 'Queensland',
-            'SA' => 'South Australia',
-            'WA' => 'Western Australia',
-            'TAS' => 'Tasmania',
-            'NT' => 'Northern Territory',
-            'ACT' => 'Australian Capital Territory',
-            'U' => 'Unknown'
-        );
-        if (array_key_exists($value, $values) === false) {
-            throw new \InvalidArgumentException("The state value $value is not valid!");
-        }
-        parent::__construct($value);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getElementTag(): string
+    {
+        return 'address:stateCode';
+    }
+
+    /**
+     * @param \DOMDocument $doc
+     *
+     * @return \DOMElement
+     */
+    public function toDOMElement(\DOMDocument $doc): \DOMElement
+    {
+        $el = $this->createElement($doc);
+        $el->setAttribute('xsi:type', 'CD');
+        $el->setAttribute('codeSystem', '1.2.643.5.1.13.13.99.2.206');
+        $el->setAttribute('codeSystemVersion', '6.2');
+        $el->setAttribute('codeSystemName', 'Субъекты Российской Федерации');
+
+        $el->setAttribute('code', $this->code);
+        $el->setAttribute('displayName', $this->name);
+        return $el;
     }
 
 }

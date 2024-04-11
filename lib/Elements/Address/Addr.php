@@ -61,12 +61,16 @@ class Addr extends AbstractElement
     private $city;
     /** @var PostalCode */
     private $postal_code;
-    /** @var State */
+    /** @var BaseState */
     private $state;
     /** @var Country */
     private $country;
     /** @var AdditionalLocator */
     private $additional_locator;
+    /**
+     * @var Fias
+     */
+    private $fias;
 
     /**
      * Addr constructor.
@@ -180,6 +184,9 @@ class Addr extends AbstractElement
         }
         if ($this->hasCountry()) {
             $el->appendChild($this->getCountry()->toDOMElement($doc));
+        }
+        if($this->fias){
+            $el->appendChild($this->fias->toDOMElement($doc));
         }
         return $el;
     }
@@ -304,19 +311,19 @@ class Addr extends AbstractElement
     }
 
     /**
-     * @return State
+     * @return BaseState
      */
-    public function getState(): State
+    public function getState(): BaseState
     {
         return $this->state;
     }
 
     /**
-     * @param State $state
+     * @param BaseState $state
      *
      * @return Addr
      */
-    public function setState(State $state): Addr
+    public function setState(BaseState $state): Addr
     {
         $this->state = $state;
         return $this;
@@ -401,6 +408,11 @@ class Addr extends AbstractElement
     {
         $this->country = $country;
         return $this;
+    }
+
+    public function setFias(Fias $fias)
+    {
+        $this->fias = $fias;
     }
 
     /**

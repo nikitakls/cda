@@ -53,6 +53,7 @@ namespace PHPHealth\CDA\RIM\Entity;
 
 use PHPHealth\CDA\DataType\Collection\Set;
 use PHPHealth\CDA\Elements\Id;
+use PHPHealth\CDA\Helper\ItemsEntities;
 use PHPHealth\CDA\Interfaces\ClassCodeInterface;
 
 /**
@@ -61,10 +62,15 @@ use PHPHealth\CDA\Interfaces\ClassCodeInterface;
 class RepresentedCustodianOrganization extends Organization
 {
 
+    /**
+     * @var string
+     */
+    private $tag = 'representedCustodianOrganization';
+
     public function __construct(Set $names, Id $id)
     {
         parent::__construct($names, $id);
-        $this->setAcceptableClassCodes(ClassCodeInterface::EntityClassOrganization);
+//        $this->setAcceptableClassCodes(ClassCodeInterface::EntityClassOrganization);
     }
 
 
@@ -100,7 +106,17 @@ class RepresentedCustodianOrganization extends Organization
         if ($this->hasAsEntityIdentifier()) {
             $el->appendChild($this->getAsEntityIdentifier()->toDOMElement($doc));
         }
+        if($this->hasItems(ItemsEntities::IDENTITY_RROPS)){
+            foreach ($this->getItems(ItemsEntities::IDENTITY_RROPS) as $item) {
+                $el->appendChild($item->toDOMElement($doc));
+            }
+        }
+
         return $el;
+    }
+
+    public function setTag(string $tag){
+        $this->tag = $tag;
     }
 
 
@@ -109,6 +125,6 @@ class RepresentedCustodianOrganization extends Organization
      */
     protected function getElementTag(): string
     {
-        return 'representedCustodianOrganization';
+        return $this->tag;
     }
 }

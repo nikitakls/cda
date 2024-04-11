@@ -37,6 +37,7 @@ use PHPHealth\CDA\Traits\AuthorsTrait;
 use PHPHealth\CDA\Traits\ClassCodeTrait;
 use PHPHealth\CDA\Traits\CodeTrait;
 use PHPHealth\CDA\Traits\CompletionCodeTrait;
+use PHPHealth\CDA\Traits\ComponentOfsTrait;
 use PHPHealth\CDA\Traits\ConfidentialityCodeTrait;
 use PHPHealth\CDA\Traits\CopyTimeTrait;
 use PHPHealth\CDA\Traits\CustodianTrait;
@@ -46,6 +47,7 @@ use PHPHealth\CDA\Traits\EffectiveTimeTrait;
 use PHPHealth\CDA\Traits\IdTrait;
 use PHPHealth\CDA\Traits\InformantsTrait;
 use PHPHealth\CDA\Traits\InformationRecipientsTrait;
+use PHPHealth\CDA\Traits\InFulfillmentOfsTrait;
 use PHPHealth\CDA\Traits\LanguageCodeTrait;
 use PHPHealth\CDA\Traits\LegalAuthenticatorTrait;
 use PHPHealth\CDA\Traits\MoodCodeTrait;
@@ -92,13 +94,14 @@ class ClinicalDocument implements ClassCodeInterface, MoodCodeInterface
     use legalAuthenticatorTrait;
     use AuthenticatorTrait;
     use ParticipantsTrait;
-    // use InFulfillmentOfsTrait;
+     use InFulfillmentOfsTrait;
     use DocumentationOfsTrait;
     // use RelatedDocumentsTrait;
     use AuthorizationTrait;
 
     // use ComponentOfTrait;
     // use ComponentTrait;
+    use ComponentOfsTrait;
     use ClassCodeTrait;
     use MoodCodeTrait;
 
@@ -191,10 +194,11 @@ class ClinicalDocument implements ClassCodeInterface, MoodCodeInterface
           ->renderAuthenticator($el, $doc)
           ->renderParticipants($el, $doc)
           // todo inFulfillmentOf
+          ->renderInFulfillmentOfs($el, $doc)
           ->renderDocumentationOfs($el, $doc)
+          ->renderComponentOfs($el, $doc)
           // todo relatedDocument
           ->renderAuthorization($el, $doc);
-        // todo componentOf
         // add components
         if (false === $this->getRootComponent()->isEmpty()) {
             $el->appendChild($this->getRootComponent()->toDOMElement($doc));

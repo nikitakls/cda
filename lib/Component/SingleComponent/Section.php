@@ -94,9 +94,9 @@ class Section extends AbstractElement implements ClassCodeInterface, MoodCodeInt
     public function __construct($id = null, $code = null, $title = null, $text = null, $entry = [])
     {
         $this->setAcceptableClassCodes(ClassCodeInterface::ActClass)
-          ->setAcceptableMoodCodes(MoodCodeInterface::ActMood)
-          ->setClassCode(ClassCodeInterface::DOCUMENT_SECTION)
-          ->setMoodCode(MoodCodeInterface::EVENT);
+          ->setAcceptableMoodCodes(MoodCodeInterface::ActMood);
+//          ->setClassCode(ClassCodeInterface::DOCUMENT_SECTION)
+//          ->setMoodCode(MoodCodeInterface::EVENT);
 
         $this->entries = [];
 

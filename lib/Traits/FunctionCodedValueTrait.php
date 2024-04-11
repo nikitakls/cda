@@ -50,7 +50,12 @@ trait FunctionCodedValueTrait
     public function renderFunctionCodedValue(\DOMElement $el, \DOMDocument $doc): self
     {
         if ($this->hasFunctionCodedValue()) {
-            $el->appendChild((new Code($this->getFunctionCodeValue()))->toDOMElement($doc));
+            $cv = $this->getFunctionCodeValue();
+            $code = (new Code($cv));
+            if($tagName = $cv->getTagName()){
+                $code->setTag($tagName);
+            }
+            $el->appendChild($code->toDOMElement($doc));
         }
         return $this;
     }

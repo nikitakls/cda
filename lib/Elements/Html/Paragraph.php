@@ -106,6 +106,7 @@ class Paragraph extends AbstractHtmlElement
                     || $choice instanceof Sup
                     || $choice instanceof Br
                     || $choice instanceof Footnote
+                    || $choice instanceof Caption
                     || $choice instanceof FootNoteRef
                     || $choice instanceof RenderMultiMedia));
     }

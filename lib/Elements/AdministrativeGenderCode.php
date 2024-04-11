@@ -33,8 +33,8 @@ use PHPHealth\CDA\DataType\Code\CodedValue;
  */
 class AdministrativeGenderCode extends Code
 {
-    const sex_male                   = 'M';
-    const sex_female                 = 'F';
+    const sex_male                   = 'male';
+    const sex_female                 = 'female';
     const sex_intersex_indeterminate = 'I';
     const sex_not_stated_described   = 'N';
 
@@ -60,21 +60,26 @@ class AdministrativeGenderCode extends Code
      */
     public static function getCodedValueFromString(string $code): CodedValue
     {
-        $uppercase_code = strtoupper($code);
+        $uppercase_code = strtolower($code);
         $codes          = array(
-          self::sex_male                   => 'Male',
-          self::sex_female                 => 'Female',
+          self::sex_male                   => 'Мужской',
+          self::sex_female                 => 'Женский',
           self::sex_intersex_indeterminate => 'Intersex or Indeterminate',
-          self::sex_not_stated_described   => 'Not Stated/Inadequately Described',
+          self::sex_not_stated_described   => 'Не указано',
         );
+        $numCodes = [
+            self::sex_male                   => 1,
+            self::sex_female                 => 2,
+            self::sex_not_stated_described   => 3,
+        ];
         if (array_key_exists($uppercase_code, $codes) === false) {
             throw new \InvalidArgumentException("The sex value $code is not valid!");
         }
-        return new CodedValue(
-          $code,
+        return (new CodedValue(
+          $numCodes[$uppercase_code],
           $codes[$uppercase_code],
-          '2.16.840.1.113883.13.68',
-          'AS 5017-2006 Health Care Client Identifier Sex');
+          '1.2.643.5.1.13.13.11.1040',
+          'Классификатор половой принадлежности'))->setCodeSystemVersion('2.1');
     }
 
     /**

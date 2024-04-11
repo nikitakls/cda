@@ -2,7 +2,7 @@
 /**
  * The MIT License
  *
- * Copyright 2016 julien.
+ * Copyright 2017 Julien Fastré <julien.fastre@champs-libres.coop>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,42 +23,39 @@
  * THE SOFTWARE.
  */
 
-namespace PHPHealth\CDA\RIM\Entity;
+namespace PHPHealth\CDA\RIM\Participation;
 
-use PHPHealth\CDA\DataType\Collection\Set;
-use PHPHealth\CDA\Elements\Id;
-use PHPHealth\CDA\Interfaces\ClassCodeInterface;
-use PHPHealth\CDA\Traits\AddrsTrait;
-use PHPHealth\CDA\Traits\AsEntityIdentifierTrait;
-use PHPHealth\CDA\Traits\CustomTrait;
-use PHPHealth\CDA\Traits\TelecomsTrait;
+use PHPHealth\CDA\Interfaces\TypeCodeInterface;
+use PHPHealth\CDA\RIM\Entity\AssignedCustodian;
+use PHPHealth\CDA\RIM\Entity\RepresentedCustodianOrganization;
+use PHPHealth\CDA\Traits\AssignedCustodianTrait;
 
 /**
- * @author julien
+ * @property RepresentedCustodianOrganization $representedCustodianOrganisation
+ * @author nikitakls.ru
  */
-abstract class Organization extends Entity
+class ProviderOrganisation extends Participation
 {
-    use TelecomsTrait;
-    use AddrsTrait;
-    use AsEntityIdentifierTrait;
-    use CustomTrait;
-
+    use AssignedCustodianTrait;
+    protected $representedCustodianOrganisation;
 
     /**
-     * Organization constructor.
-     *
-     * @param Set $names
-     * @param Id  $id
+     * @return string
      */
-    public function __construct(Set $names, Id $id, $clasCode = ClassCodeInterface::ORGANISATION)
+    protected function getElementTag(): string
     {
-        $this->setNames($names)
-          ->addId($id);
-        if($clasCode){
-//            $this->setClassCode($clasCode);
-        }
+        return 'providerOrganization';
     }
 
+    /**
+     * Custodian constructor.
+     *
+     * @param RepresentedCustodianOrganization $assignedCustodian
+     */
+    public function __construct(RepresentedCustodianOrganization $assignedCustodian)
+    {
+        $this->representedCustodianOrganisation = $assignedCustodian;
+    }
 
     /**
      * @param \DOMDocument $doc
@@ -68,17 +65,11 @@ abstract class Organization extends Entity
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         $el = $this->createElement($doc);
-        $this->renderIds($el, $doc);
-        $this->renderNames($el, $doc);
+
+        $el->appendChild($this->representedCustodianOrganisation->toDOMElement($doc));
+
         return $el;
     }
 
-    /**
-     * @return bool
-     */
-    protected function hasAsEntityIdentifier(): bool
-    {
-        return null !== $this->as_entity_identifier;
-    }
 
 }

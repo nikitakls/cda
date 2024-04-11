@@ -89,8 +89,8 @@ class PersonName extends EntityName
             }
             if($this->patronymic){
                 $q = $doc->createElement('identity:Patronymic');
-                $q->appendChild($doc->createTextNode($this->patronymic));
                 $q->setAttribute('xsi:type', 'ST');
+                $q->appendChild($doc->createTextNode($this->patronymic));
                 $name->appendChild($q);
             }
             return;

@@ -41,6 +41,8 @@ class RussianState extends BaseState
 
     public function __construct(string $name, int $code)
     {
+        $this->name = $name;
+        $this->code = $code;
     }
 
     /**

@@ -88,6 +88,11 @@ class RepresentedCustodianOrganization extends Organization
                 $el->appendChild($id->toDOMElement($doc));
             }
         }
+        if($this->hasItems(ItemsEntities::IDENTITY_RROPS)){
+            foreach ($this->getItems(ItemsEntities::IDENTITY_RROPS) as $item) {
+                $el->appendChild($item->toDOMElement($doc));
+            }
+        }
 
         foreach ($this->getNames()->get() as $name) {
             /* @var $name \PHPHealth\CDA\DataType\Name\EntityName */
@@ -105,11 +110,6 @@ class RepresentedCustodianOrganization extends Organization
         }
         if ($this->hasAsEntityIdentifier()) {
             $el->appendChild($this->getAsEntityIdentifier()->toDOMElement($doc));
-        }
-        if($this->hasItems(ItemsEntities::IDENTITY_RROPS)){
-            foreach ($this->getItems(ItemsEntities::IDENTITY_RROPS) as $item) {
-                $el->appendChild($item->toDOMElement($doc));
-            }
         }
 
         return $el;

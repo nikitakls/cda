@@ -40,6 +40,8 @@ use PHPHealth\CDA\Elements\AbstractElement;
 use PHPHealth\CDA\Interfaces\TypeCodeInterface;
 use PHPHealth\CDA\RIM\Role\ParticipantRole;
 use PHPHealth\CDA\Traits\AssignedEntityTrait;
+use PHPHealth\CDA\Traits\AssociatedEntityTrait;
+use PHPHealth\CDA\Traits\AssociatedPersonTrait;
 use PHPHealth\CDA\Traits\AwarenessCodeTrait;
 use PHPHealth\CDA\Traits\ContextControlCodeTrait;
 use PHPHealth\CDA\Traits\ParticipantRoleTrait;
@@ -59,6 +61,7 @@ class Participant extends AbstractElement implements TypeCodeInterface
     use TimeTrait;
     use TypeCodeTrait;
     use AssignedEntityTrait;
+    use AssociatedEntityTrait;
 
 
     public function __construct(?ParticipantRole $participant_role)
@@ -87,6 +90,7 @@ class Participant extends AbstractElement implements TypeCodeInterface
           ->renderAwarenessCode($el, $doc)
           ->renderParticipantRole($el, $doc);
         $this->renderAssignedEntity($el, $doc);
+        $this->renderAssociatedEntity($el, $doc);
         return $el;
     }
 

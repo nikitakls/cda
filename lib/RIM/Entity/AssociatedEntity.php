@@ -41,9 +41,11 @@ use PHPHealth\CDA\Traits\AddrsTrait;
 use PHPHealth\CDA\Traits\AssociatedPersonTrait;
 use PHPHealth\CDA\Traits\ClassCodeTrait;
 use PHPHealth\CDA\Traits\CodedValueTrait;
+use PHPHealth\CDA\Traits\CustomTrait;
 use PHPHealth\CDA\Traits\IdsTrait;
 use PHPHealth\CDA\Traits\ScopingOrganizationTrait;
 use PHPHealth\CDA\Traits\TelecomsTrait;
+use PHPHealth\CDA\Helper\ItemsEntities;
 
 /**
  * Class AssignedEntity
@@ -59,7 +61,7 @@ class AssociatedEntity extends AbstractElement implements ClassCodeInterface
     use AssociatedPersonTrait;
     use ScopingOrganizationTrait;
     use ClassCodeTrait;
-
+    use CustomTrait;
 
     /**
      * AssociatedEntity constructor.
@@ -84,6 +86,12 @@ class AssociatedEntity extends AbstractElement implements ClassCodeInterface
         $this->renderTelecoms($el, $doc);
         $this->renderAssociatedPerson($el, $doc);
         $this->renderScopingOrganization($el, $doc);
+        if($this->hasItems(ItemsEntities::IDENTITY_DOC_INFO)){
+            foreach ($this->getItems(ItemsEntities::IDENTITY_DOC_INFO) as $item) {
+                $el->appendChild($item->toDOMElement($doc));
+            }
+        }
+
         return $el;
     }
 

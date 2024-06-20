@@ -122,10 +122,11 @@ class PatientRole extends Role
                 $el->appendChild($telecom->toDOMElement($doc));
             }
         }
+        $el->appendChild($this->getPatient()->toDOMElement($doc));
+
         if($this->hasProviderOrganisation()){
             $el->appendChild($this->getProviderOrgranisation()->toDOMElement($doc));
         }
-        $el->appendChild($this->getPatient()->toDOMElement($doc));
 
         return $el;
     }

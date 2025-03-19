@@ -10,7 +10,10 @@ class IdentityDocInfo extends AbstractElement
 {
     public const TYPE = ItemsEntities::IDENTITY_DOC_INFO;
 
-    protected $docType = 3;
+    public const TYPE_OWN_MONEY = 3;
+    public const TYPE_DMS = 2;
+
+    protected $docType = self::TYPE_OWN_MONEY;
     protected $Series;
     protected $Number;
     protected $FromDate;
@@ -87,6 +90,18 @@ class IdentityDocInfo extends AbstractElement
         $type->setAttribute('codeSystemVersion', '1.1');
         $type->setAttribute('codeSystemName', 'Типы документов оснований');
         $type->setAttribute('displayName', 'Договор на оказание платных медицинских услуг');
+        return $type;
+    }
+
+    protected function getDmsTypeDocument(\DOMDocument $doc): \DOMElement
+    {
+        $type = $doc->createElement('identity:IdentityDocType');
+        $type->setAttribute('xsi:type', 'CD');
+        $type->setAttribute('code', '2');
+        $type->setAttribute('codeSystem', '1.2.643.5.1.13.13.99.2.724');
+        $type->setAttribute('codeSystemVersion', '1.1');
+        $type->setAttribute('codeSystemName', 'Типы документов оснований');
+        $type->setAttribute('displayName', 'Полис ДМС');
         return $type;
     }
 

@@ -36,8 +36,10 @@
 namespace PHPHealth\CDA\RIM\Participation;
 
 
+use PHPHealth\CDA\ClinicalDocument as CDA;
 use PHPHealth\CDA\Elements\AbstractElement;
 use PHPHealth\CDA\Interfaces\ContextControlCodeInterface;
+use PHPHealth\CDA\Interfaces\NullFlavourInterface;
 use PHPHealth\CDA\Interfaces\TypeCodeInterface;
 use PHPHealth\CDA\Traits\AssignedEntityTrait;
 use PHPHealth\CDA\Traits\ContextControlCodeTrait;
@@ -69,6 +71,7 @@ class Authenticator extends AbstractElement implements TypeCodeInterface, Contex
     {
         $el = $this->createElement($doc);
         $this->renderTime($el, $doc);
+        $this->renderNoTime($el, $doc);
         $this->renderSignatureCode($el, $doc);
         $this->renderAssignedEntity($el, $doc);
         return $el;
@@ -81,4 +84,16 @@ class Authenticator extends AbstractElement implements TypeCodeInterface, Contex
     {
         return 'authenticator';
     }
+
+    public function renderNoTime(\DOMElement $el, \DOMDocument $doc): self
+    {
+        if (!$this->hasTime()) {
+            $tm = $doc->createElement(CDA::NS_CDA . 'time');
+            $tm->setAttribute(CDA::NS_CDA . 'nullFlavor', NullFlavourInterface::NoInformation);
+
+            $el->appendChild($tm);
+        }
+        return $this;
+    }
+
 }

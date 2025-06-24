@@ -51,7 +51,7 @@ use PHPHealth\CDA\Traits\IdsTrait;
 use PHPHealth\CDA\Traits\LocationTrait;
 use PHPHealth\CDA\Traits\MoodCodeTrait;
 use PHPHealth\CDA\Traits\ResponsiblePartyTrait;
-
+use PHPHealth\CDA\Traits\CodeTrait;
 /**
  * Class EncompassingEncounter
  *
@@ -66,9 +66,9 @@ class EncompassingEncounter extends AbstractElement implements ClassCodeInterfac
     use DischargeDispositionCodeTrait;
     use ResponsiblePartyTrait;
     use LocationTrait;
-
     use ClassCodeTrait;
     use MoodCodeTrait;
+    use CodeTrait;
 
     /**
      * EncompassingEncounter constructor.
@@ -99,6 +99,7 @@ class EncompassingEncounter extends AbstractElement implements ClassCodeInterfac
         $el = $this->createElement($doc);
         $this->renderIds($el, $doc);
         $this->renderCodedValue($el, $doc);
+        $this->renderCode($el, $doc);
         $this->renderEffectiveTime($el, $doc);
         $this->renderDischargeDispositionCode($el, $doc);
 

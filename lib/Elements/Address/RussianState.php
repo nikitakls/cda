@@ -61,9 +61,9 @@ class RussianState extends BaseState
     public function toDOMElement(\DOMDocument $doc): \DOMElement
     {
         $el = $this->createElement($doc);
-        $el->setAttribute('xsi:type', 'CD');
+//        $el->setAttribute('xsi:type', 'CD');
         $el->setAttribute('codeSystem', '1.2.643.5.1.13.13.99.2.206');
-        $el->setAttribute('codeSystemVersion', '6.2');
+        $el->setAttribute('codeSystemVersion', '6.5');
         $el->setAttribute('codeSystemName', 'Субъекты Российской Федерации');
 
         $el->setAttribute('code', $this->code);

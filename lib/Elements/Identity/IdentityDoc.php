@@ -61,11 +61,12 @@ class IdentityDoc extends AbstractElement
         $el = $this->createElement($doc);
         if($this->Number){
             $el->appendChild($this->getTypeDocument($doc));
-            $el->appendChild($this->getNumber($doc));
-
             if($this->Series){
                 $el->appendChild($this->getSeries($doc));
             }
+
+            $el->appendChild($this->getNumber($doc));
+
             if($this->IssueOrgName){
                 $el->appendChild($this->getIssueOrgName($doc));
             }
@@ -87,19 +88,19 @@ class IdentityDoc extends AbstractElement
     protected function getTypeDocument(\DOMDocument $doc): \DOMElement
     {
         $type = $doc->createElement('identity:IdentityCardType');
-        $type->setAttribute('xsi:type', 'CD');
+//        $type->setAttribute('xsi:type', 'CD');
         $type->setAttribute('code', '1');
         $type->setAttribute('codeSystem', '1.2.643.5.1.13.13.99.2.48');
-        $type->setAttribute('codeSystemVersion', '4.2');
+        $type->setAttribute('codeSystemVersion', '7.2');
         $type->setAttribute('codeSystemName', 'Документы, удостоверяющие личность');
-        $type->setAttribute('displayName', 'Паспорт гражданина РФ');
+        $type->setAttribute('displayName', 'Паспорт гражданина Российской Федерации');
         return $type;
     }
 
     protected function getSeries(\DOMDocument $doc): \DOMElement
     {
         $series = $doc->createElement('identity:Series');
-        $series->setAttribute('xsi:type', 'ST');
+//        $series->setAttribute('xsi:type', 'ST');
         $series->appendChild($doc->createTextNode($this->Series));
         return $series;
     }
@@ -107,7 +108,7 @@ class IdentityDoc extends AbstractElement
     protected function getNumber(\DOMDocument $doc): \DOMElement
     {
         $series = $doc->createElement('identity:Number');
-        $series->setAttribute('xsi:type', 'ST');
+//        $series->setAttribute('xsi:type', 'ST');
         $series->appendChild($doc->createTextNode($this->Number));
         return $series;
     }
@@ -115,7 +116,7 @@ class IdentityDoc extends AbstractElement
     protected function getIssueOrgName(\DOMDocument $doc): \DOMElement
     {
         $issueOrgName = $doc->createElement('identity:IssueOrgName');
-        $issueOrgName->setAttribute('xsi:type', 'ST');
+//        $issueOrgName->setAttribute('xsi:type', 'ST');
         $issueOrgName->appendChild($doc->createTextNode($this->IssueOrgName));
         return $issueOrgName;
     }
@@ -123,7 +124,7 @@ class IdentityDoc extends AbstractElement
     protected function getIssueOrgCode(\DOMDocument $doc): \DOMElement
     {
         $issueOrgCode = $doc->createElement('identity:IssueOrgCode');
-        $issueOrgCode->setAttribute('xsi:type', 'ST');
+//        $issueOrgCode->setAttribute('xsi:type', 'ST');
         $issueOrgCode->appendChild($doc->createTextNode($this->IssueOrgCode));
         return $issueOrgCode;
     }
@@ -131,7 +132,7 @@ class IdentityDoc extends AbstractElement
     protected function getIssueDate(\DOMDocument $doc): \DOMElement
     {
         $issueDate = $doc->createElement('identity:IssueDate');
-        $issueDate->setAttribute('xsi:type', 'TS');
+//        $issueDate->setAttribute('xsi:type', 'TS');
         $issueDate->setAttribute('value', $this->IssueDate);
         return $issueDate;
     }

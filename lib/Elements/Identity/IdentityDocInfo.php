@@ -83,8 +83,11 @@ class IdentityDocInfo extends AbstractElement
 
     protected function getTypeDocument(\DOMDocument $doc): \DOMElement
     {
+        if($this->docType === self::TYPE_DMS){
+            return $this->getDmsTypeDocument($doc);
+        }
         $type = $doc->createElement('identity:IdentityDocType');
-        $type->setAttribute('xsi:type', 'CD');
+//        $type->setAttribute('xsi:type', 'CD');
         $type->setAttribute('code', '3');
         $type->setAttribute('codeSystem', '1.2.643.5.1.13.13.99.2.724');
         $type->setAttribute('codeSystemVersion', '1.1');
@@ -96,7 +99,7 @@ class IdentityDocInfo extends AbstractElement
     protected function getDmsTypeDocument(\DOMDocument $doc): \DOMElement
     {
         $type = $doc->createElement('identity:IdentityDocType');
-        $type->setAttribute('xsi:type', 'CD');
+//        $type->setAttribute('xsi:type', 'CD');
         $type->setAttribute('code', '2');
         $type->setAttribute('codeSystem', '1.2.643.5.1.13.13.99.2.724');
         $type->setAttribute('codeSystemVersion', '1.1');
@@ -154,9 +157,11 @@ class IdentityDocInfo extends AbstractElement
     {
         $eff = $doc->createElement('identity:effectiveTime');
         $low = $doc->createElement('identity:low');
-        $low->append($doc->createTextNode($this->FromDate));
+            $low->setAttribute('value', $this->FromDate);
+//        $low->append($doc->createTextNode($this->FromDate));
         $high = $doc->createElement('identity:high');
-        $high->append($doc->createTextNode($this->ToDate));
+        $high->setAttribute('value', $this->FromDate);
+//        $high->append($doc->createTextNode($this->ToDate));
         $eff->appendChild($low);
         $eff->appendChild($high);
         return $eff;

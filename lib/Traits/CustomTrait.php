@@ -62,7 +62,7 @@ trait CustomTrait
         return $this->items[$key] ?? [];
     }
 
-    public function addItem(AbstractElement $item, string $key): self
+    public function addItem($item, string $key): self
     {
         if (!isset($items[$key])) {
             $this->items[$key] = [];

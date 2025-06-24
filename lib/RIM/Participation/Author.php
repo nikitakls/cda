@@ -25,13 +25,16 @@
 
 namespace PHPHealth\CDA\RIM\Participation;
 
+use PHPHealth\CDA\ClinicalDocument as CDA;
 use PHPHealth\CDA\DataType\Quantity\DateAndTime\TimeStamp;
 use PHPHealth\CDA\Interfaces\ContextControlCodeInterface;
+use PHPHealth\CDA\Interfaces\NullFlavourInterface;
 use PHPHealth\CDA\Interfaces\TypeCodeInterface;
 use PHPHealth\CDA\RIM\Role\AssignedAuthor;
 use PHPHealth\CDA\Traits\AssignedAuthorTrait;
 use PHPHealth\CDA\Traits\ContextControlCodeTrait;
 use PHPHealth\CDA\Traits\FunctionCodedValueTrait;
+use PHPHealth\CDA\Traits\NullFlavourTrait;
 use PHPHealth\CDA\Traits\TimeTrait;
 
 /**
@@ -42,6 +45,7 @@ class Author extends Participation implements ContextControlCodeInterface
     use FunctionCodedValueTrait;
     use AssignedAuthorTrait;
     use TimeTrait;
+    use NullFlavourTrait;
 
     use ContextControlCodeTrait;
 
@@ -74,11 +78,22 @@ class Author extends Participation implements ContextControlCodeInterface
     {
         $el = $this->createElement($doc);
         $this->renderFunctionCodedValue($el, $doc)
+          ->renderNoTime($el, $doc)  
           ->renderTime($el, $doc)
           ->renderAssignedAuthor($el, $doc);
         return $el;
     }
 
+    public function renderNoTime(\DOMElement $el, \DOMDocument $doc): self
+    {
+        if (!$this->hasTime()) {
+            $tm = $doc->createElement(CDA::NS_CDA . 'time');
+            $tm->setAttribute(CDA::NS_CDA . 'nullFlavor', NullFlavourInterface::NoInformation);
+
+            $el->appendChild($tm);
+        }
+        return $this;
+    }
 
     /**
      * @return string

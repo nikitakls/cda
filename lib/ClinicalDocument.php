@@ -129,7 +129,7 @@ class ClinicalDocument implements ClassCodeInterface, MoodCodeInterface
     {
         $this->rootComponent    = new Component\RootBodyComponent();
         $this->referenceManager = new ReferenceManager();
-        $this->setTypeId(new TypeId(new InstanceIdentifier('2.16.840.1.113883.1.3', 'POCD_HD000040')))
+        $this->setTypeId(new TypeId(new InstanceIdentifier('2.16.840.1.113883.1.3', 'POCD_MT000040')))
           ->setAcceptableClassCodes(['', ClassCodeInterface::CLINICAL_DOCUMENT])
           ->setClassCode('')
           ->setAcceptableMoodCodes(['', MoodCodeInterface::EVENT])

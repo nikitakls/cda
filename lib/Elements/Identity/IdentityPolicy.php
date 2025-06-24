@@ -17,7 +17,7 @@ class IdentityPolicy extends AbstractElement
 
     protected function getElementTag(): string
     {
-        return 'identity:InsuracePolicy';
+        return 'identity:InsurancePolicy';
     }
 
     public function toDOMElement(\DOMDocument $doc): \DOMElement

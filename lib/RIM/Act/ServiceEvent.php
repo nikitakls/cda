@@ -46,10 +46,12 @@ namespace PHPHealth\CDA\RIM\Act;
 
 
 use PHPHealth\CDA\Elements\AbstractElement;
+use PHPHealth\CDA\Helper\ItemsEntities;
 use PHPHealth\CDA\Interfaces\ClassCodeInterface;
 use PHPHealth\CDA\Interfaces\MoodCodeInterface;
 use PHPHealth\CDA\Traits\ClassCodeTrait;
 use PHPHealth\CDA\Traits\CodeTrait;
+use PHPHealth\CDA\Traits\CustomTrait;
 use PHPHealth\CDA\Traits\EffectiveTimeTrait;
 use PHPHealth\CDA\Traits\IdsTrait;
 use PHPHealth\CDA\Traits\MoodCodeTrait;
@@ -63,13 +65,15 @@ class ServiceEvent extends AbstractElement implements ClassCodeInterface, MoodCo
     use PerformersTrait;
     use ClassCodeTrait;
     use MoodCodeTrait;
+    use CustomTrait;
+
 
     public function __construct()
     {
         $this->setAcceptableClassCodes(ClassCodeInterface::ActClassRoot)
-          ->setClassCode('')
-          ->setAcceptableMoodCodes(MoodCodeInterface::ActMood)
-          ->setMoodCode(MoodCodeInterface::EVENT);
+            ->setClassCode('')
+            ->setAcceptableMoodCodes(MoodCodeInterface::ActMood)
+            ->setMoodCode(MoodCodeInterface::EVENT);
     }
 
     /**
@@ -79,9 +83,22 @@ class ServiceEvent extends AbstractElement implements ClassCodeInterface, MoodCo
     {
         $el = $this->createElement($doc);
         $this->renderIds($el, $doc)
-          ->renderCode($el, $doc)
-          ->renderEffectiveTime($el, $doc)
-          ->renderPerformers($el, $doc);
+            ->renderCode($el, $doc)
+            ->renderEffectiveTime($el, $doc);
+        $keys = [
+            ItemsEntities::MED_SERVICE_SERVICE_FORM,
+            ItemsEntities::MED_SERVICE_SERVICE_TYPE,
+            ItemsEntities::MED_SERVICE_SERVICE_COND,
+        ];
+        foreach ($keys as $key){
+            if ($this->hasItems($key)){
+                foreach ($this->getItems($key) as $item) {
+                    $el->appendChild($item->toDOMElement($doc));
+                }
+            }
+        }
+
+        $this->renderPerformers($el, $doc);
         return $el;
     }
 

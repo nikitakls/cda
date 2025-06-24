@@ -55,7 +55,7 @@ class LegalAuthenticator extends Authenticator
      * @param SignatureCode  $signature_code
      * @param AssignedEntity $assigned_entity
      */
-    public function __construct(Time $time, SignatureCode $signature_code, AssignedEntity $assigned_entity)
+    public function __construct(?Time $time, SignatureCode $signature_code, AssignedEntity $assigned_entity)
     {
         parent::__construct();
         $this->setAcceptableTypeCodes(['', TypeCodeInterface::LEGAL_AUTHENTICATOR])
